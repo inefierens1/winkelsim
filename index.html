@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WinkelSim 2.0 — Oefenpakket Winkelverkoper | Crescendo CVO</title>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cvo-donkergrijs:#4d5554; --cvo-grijs:#999; --cvo-lichtgrijs:#f7f8f6;
+  --cvo-rood:#b91818; --cvo-zwart:#000; --cvo-wit:#fff;
+  --cvo-pastel-roze:#dacfd3; --cvo-pastel-groen:#ced7d2; --cvo-pastel-paars:#c8c6c7;
+  --cvo-logo-roze:#a28790; --cvo-logo-groen:#889a91; --cvo-logo-paars:#4a4247;
+  --cluster-verkoop:#4783a5; --cluster-diploma:#40acb6;
+  --font-body:'Calibri','Open Sans',sans-serif; --font-poster:'Bebas Neue','Calibri',sans-serif;
+  --groen-ok:#00aa55; --groen-ok-licht:#e8f8f0;
+  --oranje:#e07b00; --oranje-licht:#fff3e0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font-body);background:#eef0ef;color:var(--cvo-zwart);min-height:100vh;display:flex;flex-direction:column;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--cvo-donkergrijs);padding:0;z-index:200;position:sticky;top:0;box-shadow:0 2px 12px rgba(0,0,0,.35);}
+.topbar-inner{display:flex;align-items:center;justify-content:space-between;padding:9px 18px;max-width:100%;gap:12px;}
+.logo-area{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.logo-hex{width:32px;height:32px;}
+.logo-text strong{display:block;font-size:15px;font-weight:700;color:#fff;letter-spacing:.03em;}
+.logo-text span{display:block;font-size:8px;font-weight:300;color:var(--cvo-pastel-groen);letter-spacing:.1em;text-transform:uppercase;}
+.topbar-title{font-family:var(--font-poster);font-size:22px;color:#fff;letter-spacing:.06em;flex:1;text-align:center;}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.cursist-badge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:11px;font-weight:600;padding:5px 11px;border-radius:3px;display:flex;align-items:center;gap:6px;}
+.btn-docent{background:var(--cluster-diploma);color:#fff;border:none;border-radius:3px;padding:6px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font-body);}
+.btn-docent:hover{background:var(--cluster-verkoop);}
+
+/* ── SIDEBAR + CONTENT ── */
+.app-shell{display:flex;flex:1;min-height:0;}
+.sidebar{width:200px;background:var(--cvo-donkergrijs);flex-shrink:0;display:flex;flex-direction:column;padding:14px 0;}
+.sidebar-section{padding:4px 0 10px;}
+.sidebar-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);padding:0 14px 5px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 14px;cursor:pointer;color:rgba(255,255,255,.7);font-size:12px;font-weight:600;transition:all .15s;border-left:3px solid transparent;}
+.nav-item:hover{background:rgba(255,255,255,.07);color:#fff;}
+.nav-item.active{background:rgba(255,255,255,.12);color:#fff;border-left-color:var(--cluster-diploma);}
+.nav-item .ni{font-size:15px;flex-shrink:0;}
+.nav-badge{background:var(--cvo-rood);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;margin-left:auto;}
+.nav-badge.groen{background:var(--groen-ok);}
+.sidebar-divider{border:none;border-top:1px solid rgba(255,255,255,.1);margin:6px 14px;}
+.sidebar-score{background:rgba(255,255,255,.08);margin:8px 10px;border-radius:4px;padding:10px;color:#fff;}
+.sidebar-score .ss-label{font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5);margin-bottom:5px;}
+.sidebar-score .ss-pct{font-size:26px;font-weight:700;color:var(--cluster-diploma);font-family:'Courier New',monospace;}
+.sidebar-score .ss-detail{font-size:10px;color:rgba(255,255,255,.5);margin-top:2px;}
+.voortgang-mini{height:4px;background:rgba(255,255,255,.15);border-radius:2px;margin-top:6px;overflow:hidden;}
+.voortgang-mini-fill{height:100%;background:linear-gradient(90deg,var(--cluster-diploma),var(--cluster-verkoop));border-radius:2px;transition:width .4s;}
+
+.content{flex:1;overflow-y:auto;padding:20px;}
+.page{display:none;}
+.page.active{display:block;}
+
+/* ── CARD SYSTEEM ── */
+.card{background:#fff;border:1px solid #dde0dd;border-radius:6px;overflow:hidden;margin-bottom:14px;}
+.card-header{padding:11px 15px;display:flex;align-items:center;gap:9px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.card-header.dark{background:var(--cvo-donkergrijs);color:#fff;}
+.card-header.blauw{background:var(--cluster-verkoop);color:#fff;}
+.card-header.teal{background:var(--cluster-diploma);color:#fff;}
+.card-header.groen{background:var(--groen-ok);color:#fff;}
+.card-header.oranje{background:var(--oranje);color:#fff;}
+.card-body{padding:15px;}
+.card-grid{display:grid;gap:14px;}
+.card-grid.cols2{grid-template-columns:1fr 1fr;}
+.card-grid.cols3{grid-template-columns:1fr 1fr 1fr;}
+.card-grid.cols4{grid-template-columns:repeat(4,1fr);}
+
+/* ── KPI TILES ── */
+.kpi-tile{background:#fff;border:1px solid #dde0dd;border-radius:6px;padding:14px;text-align:center;}
+.kpi-tile .kt-ico{font-size:24px;margin-bottom:5px;}
+.kpi-tile .kt-val{font-size:26px;font-weight:700;color:var(--cvo-donkergrijs);font-family:'Courier New',monospace;}
+.kpi-tile .kt-label{font-size:10px;color:var(--cvo-grijs);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;}
+.kpi-tile .kt-delta{font-size:11px;font-weight:600;margin-top:3px;}
+.kpi-tile .kt-delta.up{color:var(--groen-ok);}
+.kpi-tile .kt-delta.down{color:var(--cvo-rood);}
+
+/* ── FORMS ── */
+.form-row{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;}
+.form-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:120px;}
+.form-group label{font-size:11px;font-weight:700;color:var(--cvo-donkergrijs);}
+.form-group input,.form-group select,.form-group textarea{border:1px solid #ccc;border-radius:3px;padding:7px 10px;font-family:var(--font-body);font-size:12px;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:2px solid var(--cluster-diploma);border-color:transparent;}
+.form-group input.mono{font-family:'Courier New',monospace;font-size:14px;font-weight:700;}
+.form-group input.readonly{background:var(--cvo-lichtgrijs);color:var(--cvo-grijs);}
+
+/* ── BUTTONS ── */
+.btn{border:none;border-radius:3px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-body);transition:all .15s;display:inline-flex;align-items:center;gap:6px;}
+.btn-primary{background:var(--cluster-verkoop);color:#fff;}
+.btn-primary:hover{background:var(--cvo-donkergrijs);}
+.btn-success{background:var(--groen-ok);color:#fff;}
+.btn-success:hover{background:#007733;}
+.btn-danger{background:var(--cvo-rood);color:#fff;}
+.btn-danger:hover{background:#8b0000;}
+.btn-teal{background:var(--cluster-diploma);color:#fff;}
+.btn-teal:hover{background:var(--cluster-verkoop);}
+.btn-ghost{background:var(--cvo-lichtgrijs);border:1px solid #ccc;color:var(--cvo-donkergrijs);}
+.btn-ghost:hover{background:var(--cvo-pastel-groen);}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+
+/* ── TABELLEN ── */
+.data-table{width:100%;border-collapse:collapse;font-size:12px;}
+.data-table th{background:var(--cvo-lichtgrijs);padding:8px 11px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--cvo-donkergrijs);border-bottom:2px solid #dde0dd;}
+.data-table td{padding:8px 11px;border-bottom:1px solid #eee;vertical-align:middle;}
+.data-table tr:hover td{background:#f5f7f5;}
+.data-table .td-num{text-align:right;font-family:'Courier New',monospace;font-weight:600;}
+.pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;}
+.pill-ok{background:#d4f4e6;color:#005522;}
+.pill-warn{background:#fff3e0;color:#7a4000;}
+.pill-danger{background:#fde8e8;color:#7a0000;}
+.pill-info{background:#e0f0ff;color:#003366;}
+.pill-grey{background:#eee;color:#555;}
+
+/* ── SECTION LABEL ── */
+.section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--cvo-grijs);margin-bottom:9px;display:flex;align-items:center;gap:7px;}
+.section-label::after{content:'';flex:1;height:1px;background:#dde0dd;}
+.comp-tag{display:inline-flex;align-items:center;gap:5px;background:var(--cvo-pastel-groen);color:var(--cvo-donkergrijs);font-size:10px;font-weight:700;padding:3px 9px;border-radius:2px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;}
+
+/* ── PAGE TITLE ── */
+.page-title{margin-bottom:16px;}
+.page-title h2{font-family:var(--font-poster);font-size:28px;color:var(--cvo-donkergrijs);letter-spacing:.04em;}
+.page-title p{font-size:12px;color:var(--cvo-grijs);margin-top:3px;}
+
+/* ── KASSA SPECIFIEK ── */
+.product-categorie-wrap{margin-bottom:10px;}
+.cat-strip{background:var(--cvo-donkergrijs);color:#fff;font-size:10px;font-weight:700;padding:4px 10px;border-radius:2px 2px 0 0;text-transform:uppercase;letter-spacing:.06em;display:inline-block;}
+.product-grid-small{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:6px;background:#fff;border:1px solid #dde0dd;border-top:none;padding:8px;border-radius:0 0 4px 4px;}
+.prod-btn{background:var(--cvo-lichtgrijs);border:1px solid #dde0dd;border-radius:4px;padding:8px 6px;cursor:pointer;text-align:center;transition:all .15s;font-family:var(--font-body);position:relative;}
+.prod-btn:hover{background:var(--cvo-pastel-groen);border-color:var(--cluster-verkoop);transform:translateY(-1px);}
+.prod-btn .p-ico{font-size:20px;display:block;margin-bottom:2px;}
+.prod-btn .p-naam{font-size:10px;font-weight:600;color:var(--cvo-donkergrijs);display:block;}
+.prod-btn .p-prijs{font-size:11px;font-weight:700;color:var(--cluster-verkoop);display:block;}
+.prod-btn .p-voorraad{position:absolute;top:3px;right:3px;font-size:8px;font-weight:700;padding:1px 4px;border-radius:8px;}
+.prod-btn.laag-voorraad .p-voorraad{background:#fff3e0;color:var(--oranje);}
+.prod-btn.geen-voorraad{opacity:.4;cursor:not-allowed;}
+.prod-btn.geen-voorraad .p-voorraad{background:#fde8e8;color:var(--cvo-rood);}
+
+.kassa-scherm-wrap{position:sticky;top:70px;}
+.kassa-display{background:#0d1117;border-radius:6px 6px 0 0;padding:11px 13px 8px;font-family:'Courier New',monospace;}
+.kd-header{text-align:center;border-bottom:1px solid #1e2a1e;padding-bottom:6px;margin-bottom:7px;}
+.kd-winkel{font-size:13px;font-weight:bold;color:#7fffbf;}
+.kd-sub{font-size:9px;color:#555;margin-top:2px;}
+.kd-lijn{border-top:1px dashed #1e2a1e;margin:5px 0;}
+.kd-row{display:flex;justify-content:space-between;font-size:10px;padding:1px 0;}
+.kd-row.klant-rij{color:#85cee4;font-style:italic;}
+.kd-row.korting-rij{color:#ff8888;}
+.kd-row.sub-rij{color:#ffff88;font-weight:bold;}
+.kd-empty{text-align:center;color:#2a3a2a;padding:18px 0;font-size:10px;}
+.kd-totaal{text-align:right;font-size:22px;font-weight:bold;color:#00ff88;padding:6px 0 3px;border-top:2px solid #1e2a1e;margin-top:4px;}
+.kd-aantallen{font-size:9px;color:#444;text-align:right;}
+.kd-klant-display{font-size:9px;color:#85cee4;text-align:right;margin-top:2px;}
+
+.kassa-panel{background:#fff;border:1px solid #dde0dd;border-top:none;border-radius:0 0 6px 6px;padding:13px;}
+.betaal-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;}
+.betaal-btn{padding:10px 8px;border:2px solid #dde0dd;border-radius:4px;background:#fff;cursor:pointer;font-family:var(--font-body);font-size:11px;font-weight:600;color:var(--cvo-donkergrijs);text-align:center;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.betaal-btn .bi{font-size:16px;}
+.betaal-btn:hover:not(:disabled){border-color:var(--cluster-verkoop);background:var(--cvo-pastel-groen);}
+.betaal-btn.sel{border-color:var(--cluster-verkoop);background:var(--cvo-pastel-groen);}
+.betaal-btn:disabled{opacity:.3;cursor:not-allowed;}
+.cash-vak{background:var(--cvo-lichtgrijs);border-radius:4px;padding:10px;margin-bottom:9px;display:none;}
+.cash-vak.open{display:block;}
+.cash-vak label{font-size:11px;font-weight:700;color:var(--cvo-donkergrijs);display:block;margin-bottom:5px;}
+.cash-vak input{width:100%;border:2px solid #ccc;border-radius:3px;padding:8px 10px;font-size:15px;font-weight:700;font-family:'Courier New',monospace;margin-bottom:6px;}
+.cash-vak input:focus{outline:none;border-color:var(--cluster-verkoop);}
+.munten-row{display:flex;flex-wrap:wrap;gap:4px;}
+.munt-pill{background:#f0f0f0;border:1px solid #ccc;border-radius:3px;padding:3px 6px;font-size:10px;font-weight:700;cursor:pointer;font-family:var(--font-body);}
+.munt-pill:hover{background:var(--cvo-pastel-groen);}
+.wg-result{border-radius:4px;padding:9px 11px;margin-top:6px;display:none;}
+.wg-result.ok{display:block;background:#e8f8f0;border:2px solid var(--groen-ok);}
+.wg-result.nok{display:block;background:#fde8e8;border:2px solid var(--cvo-rood);}
+.wg-result .wgr-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#005522;}
+.wg-result.nok .wgr-label{color:#7a0000;}
+.wg-result .wgr-val{font-size:20px;font-weight:700;font-family:'Courier New',monospace;color:#00aa55;}
+.wg-result.nok .wgr-val{color:var(--cvo-rood);font-size:13px;}
+.afrekenen-rij{display:flex;gap:7px;margin-top:10px;}
+.btn-afrekenen{flex:1;background:var(--groen-ok);color:#fff;border:none;border-radius:4px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font-body);}
+.btn-afrekenen:hover{background:#007733;}
+.btn-afrekenen:disabled{background:#aaa;cursor:not-allowed;}
+.btn-annuleer-kassa{background:var(--cvo-rood);color:#fff;border:none;border-radius:4px;padding:11px 13px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font-body);}
+
+/* ── KLANTEN ── */
+.klant-kaart{background:var(--cvo-lichtgrijs);border:2px solid transparent;border-radius:5px;padding:11px;cursor:pointer;transition:all .15s;margin-bottom:7px;}
+.klant-kaart:hover{border-color:var(--cluster-verkoop);}
+.klant-kaart.actief{border-color:var(--cluster-diploma);background:var(--cvo-pastel-groen);}
+.kk-naam{font-size:13px;font-weight:700;color:var(--cvo-donkergrijs);}
+.kk-meta{font-size:10px;color:var(--cvo-grijs);margin-top:2px;}
+.kk-punten{font-size:12px;font-weight:700;color:var(--cluster-verkoop);}
+.klant-detail-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.klant-avatar-groot{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;background:var(--cvo-pastel-roze);flex-shrink:0;}
+.klant-naam-groot{font-size:18px;font-weight:700;color:var(--cvo-donkergrijs);}
+.klant-sub{font-size:12px;color:var(--cvo-grijs);}
+.loyaliteit-meter{background:#eee;border-radius:8px;height:10px;overflow:hidden;margin-top:6px;}
+.loyaliteit-fill{height:100%;background:linear-gradient(90deg,var(--cluster-diploma),var(--cluster-verkoop));border-radius:8px;transition:width .5s;}
+
+/* ── VOORRAAD ── */
+.voorraad-bar{height:6px;border-radius:3px;background:#eee;overflow:hidden;margin-top:4px;}
+.voorraad-bar-fill{height:100%;border-radius:3px;transition:width .3s;}
+.voorraad-bar-fill.ok{background:var(--groen-ok);}
+.voorraad-bar-fill.laag{background:var(--oranje);}
+.voorraad-bar-fill.leeg{background:var(--cvo-rood);}
+
+/* ── LEVERING ── */
+.levering-item{background:var(--cvo-lichtgrijs);border:1px solid #dde0dd;border-radius:4px;padding:10px;margin-bottom:7px;display:flex;align-items:center;gap:10px;}
+.li-ico{font-size:20px;}
+.li-info{flex:1;}
+.li-naam{font-size:12px;font-weight:700;color:var(--cvo-donkergrijs);}
+.li-detail{font-size:10px;color:var(--cvo-grijs);}
+.li-qty{font-size:12px;font-weight:700;color:var(--cluster-verkoop);}
+.levering-controle{background:#fff;border:2px solid #dde0dd;border-radius:4px;padding:11px;margin-bottom:9px;}
+.lc-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.lc-label{flex:1;font-size:12px;font-weight:600;}
+.lc-status{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;}
+
+/* ── RAPPORTEN ── */
+.rapport-getal{font-family:'Courier New',monospace;font-weight:700;font-size:15px;}
+.rapport-getal.positief{color:var(--groen-ok);}
+.rapport-getal.negatief{color:var(--cvo-rood);}
+.z-rapport-papier{background:#fffef8;border:1px solid #e0ddd0;border-radius:4px;padding:16px;font-family:'Courier New',monospace;font-size:11px;line-height:1.9;color:#222;box-shadow:inset 0 0 0 4px #f8f6ee;}
+.zr-center{text-align:center;}
+.zr-bold{font-weight:bold;}
+.zr-lijn{border-top:1px dashed #bbb;margin:6px 0;}
+.zr-row{display:flex;justify-content:space-between;}
+.zr-totaal{font-size:14px;font-weight:bold;}
+.zr-subtitel{font-size:9px;color:#999;text-align:center;margin-top:3px;}
+
+/* ── DOCENTEN PANEL ── */
+.cursist-rij{background:#fff;border:1px solid #dde0dd;border-radius:5px;padding:11px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.cr-avatar{width:36px;height:36px;border-radius:50%;background:var(--cvo-pastel-roze);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.cr-naam{font-size:13px;font-weight:700;color:var(--cvo-donkergrijs);flex:1;}
+.cr-meta{font-size:10px;color:var(--cvo-grijs);}
+.cr-score-balk{flex:0 0 140px;}
+.cr-pct{font-size:13px;font-weight:700;color:var(--cluster-verkoop);text-align:right;min-width:38px;}
+.voortgang-balk{height:6px;background:#eee;border-radius:3px;overflow:hidden;margin-top:4px;}
+.voortgang-fill{height:100%;background:linear-gradient(90deg,var(--cluster-diploma),var(--cluster-verkoop));border-radius:3px;transition:width .4s;}
+.comp-matrix{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:8px;}
+.comp-cel{aspect-ratio:1;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;cursor:default;}
+.comp-cel.behaald{background:#d4f4e6;color:#005522;}
+.comp-cel.in-progress{background:#fff3e0;color:#7a4000;}
+.comp-cel.open{background:#eee;color:#999;}
+
+/* ── FEEDBACK & MODALS ── */
+.fb-vak{border-radius:4px;padding:10px 13px;font-size:12px;font-weight:600;margin-top:8px;display:none;}
+.fb-vak.ok{display:block;background:var(--groen-ok-licht);border:2px solid var(--groen-ok);color:#005522;}
+.fb-vak.nok{display:block;background:#fde8e8;border:2px solid var(--cvo-rood);color:#7a0000;}
+.fb-vak.info{display:block;background:#e0f0ff;border:2px solid #4783a5;color:#003366;}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:8px;padding:24px;max-width:460px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:popIn .2s ease;}
+@keyframes popIn{from{transform:scale(.88);opacity:0;}to{transform:scale(1);opacity:1;}}
+.modal-box h3{font-size:15px;font-weight:700;color:var(--cvo-donkergrijs);margin-bottom:14px;text-transform:uppercase;letter-spacing:.04em;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--cvo-donkergrijs);color:#fff;padding:11px 18px;border-radius:5px;font-size:12px;font-weight:600;z-index:1000;transform:translateY(100px);opacity:0;transition:all .3s;box-shadow:0 4px 14px rgba(0,0,0,.3);}
+.toast.ok{background:var(--groen-ok);}
+.toast.nok{background:var(--cvo-rood);}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* ── MISC ── */
+.info-blok{background:var(--cvo-lichtgrijs);border-left:4px solid var(--cluster-diploma);padding:11px 13px;border-radius:0 4px 4px 0;font-size:12px;line-height:1.6;margin-bottom:12px;}
+.warn-blok{background:#fff3e0;border-left:4px solid var(--oranje);padding:11px 13px;border-radius:0 4px 4px 0;font-size:12px;line-height:1.6;margin-bottom:12px;}
+.small-grey{font-size:11px;color:var(--cvo-grijs);}
+.mono{font-family:'Courier New',monospace;font-weight:700;}
+.mt8{margin-top:8px;} .mt12{margin-top:12px;} .mb8{margin-bottom:8px;} .mb12{margin-bottom:12px;}
+.flex-between{display:flex;justify-content:space-between;align-items:center;}
+.w100{width:100%;}
+.text-right{text-align:right;}
+@media(max-width:800px){
+  .sidebar{display:none;}
+  .card-grid.cols2,.card-grid.cols3,.card-grid.cols4{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="logo-area">
+      <svg class="logo-hex" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="50,4 96,28 96,72 50,96 4,72 4,28" fill="#4a4247"/>
+        <polygon points="50,4 96,28 73,40 27,40 4,28" fill="#a28790" opacity=".9"/>
+        <polygon points="4,28 27,40 27,72 4,72" fill="#889a91" opacity=".9"/>
+        <polygon points="96,28 96,72 73,72 73,40" fill="#4a4247" opacity=".55"/>
+      </svg>
+      <div class="logo-text"><strong>Crescendo CVO</strong><span>centrum voor volwassenenonderwijs</span></div>
+    </div>
+    <div class="topbar-title">WINKELSIM 2.0</div>
+    <div class="topbar-right">
+      <div class="cursist-badge">👤 <span id="cursist-naam-display">Cursist</span></div>
+      <button class="btn-docent" onclick="openDocenten()">🎓 Docent</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP SHELL -->
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Winkelflow</div>
+      <div class="nav-item active" onclick="gaNaar('dashboard',this)"><span class="ni">📊</span>Dashboard</div>
+      <div class="nav-item" onclick="gaNaar('levering',this)"><span class="ni">🚚</span>Levering <span class="nav-badge" id="badge-levering">1</span></div>
+      <div class="nav-item" onclick="gaNaar('voorraad',this)"><span class="ni">📦</span>Voorraad <span class="nav-badge" id="badge-voorraad" style="display:none"></span></div>
+      <div class="nav-item" onclick="gaNaar('kassa',this)"><span class="ni">🧾</span>Kassa</div>
+      <div class="nav-item" onclick="gaNaar('retour',this)"><span class="ni">↩️</span>Retouren</div>
+    </div>
+    <hr class="sidebar-divider">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Klanten</div>
+      <div class="nav-item" onclick="gaNaar('klanten',this)"><span class="ni">👥</span>Klantendossiers</div>
+      <div class="nav-item" onclick="gaNaar('loyaliteit',this)"><span class="ni">⭐</span>Loyaliteitskaart</div>
+    </div>
+    <hr class="sidebar-divider">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Backoffice</div>
+      <div class="nav-item" onclick="gaNaar('rapportage',this)"><span class="ni">📈</span>Rapportage</div>
+      <div class="nav-item" onclick="gaNaar('dagafsluiting',this)"><span class="ni">🔒</span>Dagafsluiting</div>
+    </div>
+    <hr class="sidebar-divider">
+    <div class="sidebar-score">
+      <div class="ss-label">Mijn voortgang</div>
+      <div class="ss-pct" id="sidebar-pct">0%</div>
+      <div class="ss-detail" id="sidebar-detail">0 / 6 modules</div>
+      <div class="voortgang-mini"><div class="voortgang-mini-fill" id="sidebar-balk" style="width:0%"></div></div>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div id="page-dashboard" class="page active">
+      <div class="page-title">
+        <h2>DASHBOARD</h2>
+        <p id="dashboard-datum">Vandaag — Crescendo-Markt, Mechelen</p>
+      </div>
+      <div class="card-grid cols4 mb12" id="dashboard-kpis">
+        <div class="kpi-tile"><div class="kt-ico">💶</div><div class="kt-val" id="kpi-omzet">€ 0,00</div><div class="kt-label">Dag-omzet</div><div class="kt-delta up" id="kpi-omzet-delta">↑ start</div></div>
+        <div class="kpi-tile"><div class="kt-ico">🧾</div><div class="kt-val" id="kpi-trans">0</div><div class="kt-label">Transacties</div><div class="kt-delta up" id="kpi-trans-delta">vandaag</div></div>
+        <div class="kpi-tile"><div class="kt-ico">👥</div><div class="kt-val" id="kpi-klanten">0</div><div class="kt-label">Klanten geholpen</div><div class="kt-delta" id="kpi-klanten-delta">loyaliteitskaart: 0</div></div>
+        <div class="kpi-tile"><div class="kt-ico">📦</div><div class="kt-val" id="kpi-laag">0</div><div class="kt-label">Lage voorraad</div><div class="kt-delta down" id="kpi-laag-delta">⚠ controleer</div></div>
+      </div>
+      <div class="card-grid cols2">
+        <div class="card">
+          <div class="card-header dark">📋 Takenlijst vandaag</div>
+          <div class="card-body" id="takenlijst">
+            <div id="taak-levering" style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid #eee;cursor:pointer;" onclick="gaNaarEnKlik('levering')">
+              <span style="font-size:18px;">🚚</span>
+              <div style="flex:1;"><div style="font-size:12px;font-weight:700;">Levering verwerken</div><div class="small-grey">1 levering wacht op controle</div></div>
+              <span class="pill pill-warn">Open</span>
+            </div>
+            <div id="taak-rek" style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid #eee;cursor:pointer;" onclick="gaNaar('voorraad',document.querySelector('.nav-item:nth-child(3)'))">
+              <span style="font-size:18px;">📦</span>
+              <div style="flex:1;"><div style="font-size:12px;font-weight:700;">Rekken aanvullen</div><div class="small-grey">Controleer lage voorraden</div></div>
+              <span class="pill pill-grey" id="taak-rek-pill">Wacht</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid #eee;cursor:pointer;" onclick="gaNaar('kassa',document.querySelector('.nav-item:nth-child(4)'))">
+              <span style="font-size:18px;">🧾</span>
+              <div style="flex:1;"><div style="font-size:12px;font-weight:700;">Kassa bemannen</div><div class="small-grey">Klanten bedienen & afrekenen</div></div>
+              <span class="pill pill-info">Doorlopend</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:9px;padding:8px 0;cursor:pointer;" onclick="gaNaar('dagafsluiting',document.querySelector('.nav-item:nth-child(8)'))">
+              <span style="font-size:18px;">🔒</span>
+              <div style="flex:1;"><div style="font-size:12px;font-weight:700;">Dagafsluiting</div><div class="small-grey">Kassa tellen & Z-rapport</div></div>
+              <span class="pill pill-grey">Einde dag</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header teal">🎯 Mijn competenties</div>
+          <div class="card-body">
+            <div id="comp-overzicht"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card mt12">
+        <div class="card-header dark">📜 Activiteitenlog</div>
+        <div class="card-body"><div id="activiteit-log" style="font-size:11px;line-height:1.9;color:var(--cvo-donkergrijs);max-height:140px;overflow-y:auto;">Geen activiteit nog geregistreerd.</div></div>
+      </div>
+    </div>
+
+    <!-- ===== LEVERING ===== -->
+    <div id="page-levering" class="page">
+      <div class="page-title"><h2>LEVERING VERWERKEN</h2><p>Competentie 14: leveringen ontvangen, controleren en registreren</p></div>
+      <div class="comp-tag">📋 Comp. 14 — Levering vergelijken met bestelbon, kwaliteit evalueren, opslaan</div>
+      <div class="card-grid cols2">
+        <div>
+          <div class="card">
+            <div class="card-header oranje">🚚 Binnenkomende levering #LV-2024-047</div>
+            <div class="card-body">
+              <div class="info-blok"><strong>Leverancier:</strong> Freshco Groothandel Mechelen<br><strong>Besteldatum:</strong> <span id="lever-datum"></span><br><strong>Levering voor:</strong> Crescendo-Markt, Vaartdijk 86</div>
+              <div class="section-label">Geleverde artikelen</div>
+              <div id="levering-items"></div>
+              <div class="warn-blok mt8" id="lever-waarschuwing" style="display:none;"><strong>⚠ Afwijking gedetecteerd!</strong><br><span id="lever-afwijking-tekst"></span></div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-header dark">✓ Ontvangstcontrole</div>
+            <div class="card-body">
+              <div class="section-label">Stap 1 — Vergelijk levering met bestelbon</div>
+              <div id="levering-controle-items"></div>
+              <div class="section-label mt12">Stap 2 — Kwaliteitscontrole</div>
+              <div class="card-grid cols2" style="gap:7px;">
+                <div>
+                  <div class="form-group mb8"><label>Verpakking in orde?</label>
+                    <select id="lever-verpakking"><option value="">Kies...</option><option value="ok">✅ Ja, alles intact</option><option value="licht">⚠ Lichte beschadiging</option><option value="zwaar">❌ Zwaar beschadigd</option></select></div>
+                  <div class="form-group"><label>Versheid/houdbaarheid?</label>
+                    <select id="lever-versheid"><option value="">Kies...</option><option value="ok">✅ Datum OK</option><option value="kort">⚠ Korte houdbaarheid</option><option value="verlopen">❌ Verlopen</option></select></div>
+                </div>
+                <div>
+                  <div class="form-group mb8"><label>Temperatuur koelwaren?</label>
+                    <select id="lever-temp"><option value="">Kies...</option><option value="ok">✅ Correct (≤7°C)</option><option value="warm">❌ Te warm (>7°C)</option><option value="nvt">N.v.t.</option></select></div>
+                  <div class="form-group"><label>Actie bij afwijking?</label>
+                    <select id="lever-actie"><option value="">Kies...</option><option value="aanvaarden">Aanvaarden</option><option value="deels">Deels weigeren</option><option value="weigeren">Volledig weigeren</option><option value="leidinggevende">Leidinggevende raadplegen</option></select></div>
+                </div>
+              </div>
+              <div class="form-group mt8"><label>Opmerking (optioneel):</label><textarea id="lever-opmerking" rows="2" placeholder="Noteer eventuele afwijkingen..."></textarea></div>
+              <div class="btn-row">
+                <button class="btn btn-success" onclick="verwerkLevering()">✓ Levering registreren & voorraad bijwerken</button>
+              </div>
+              <div class="fb-vak" id="lever-fb"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== VOORRAAD ===== -->
+    <div id="page-voorraad" class="page">
+      <div class="page-title"><h2>VOORRAADBEHEER</h2><p>Competentie 12 & 13: voorraad opvolgen, rekken aanvullen, tekorten signaleren</p></div>
+      <div class="comp-tag">📋 Comp. 12, 13 — Aanvullen, FIFO-principe, tekorten melden</div>
+      <div class="card-grid cols2">
+        <div class="card">
+          <div class="card-header dark">📦 Huidige voorraadstatus</div>
+          <div class="card-body">
+            <div id="voorraad-tabel"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header teal">🔄 Rek aanvullen (FIFO)</div>
+          <div class="card-body">
+            <div class="info-blok">
+              <strong>FIFO-principe:</strong> First In, First Out. Nieuwe producten <em>achteraan</em> plaatsen, oudste producten <em>vooraan</em>. Dit vermijdt vervallen stock.
+            </div>
+            <div class="section-label">Selecteer artikel om aan te vullen</div>
+            <div id="aanvul-selectie"></div>
+            <div class="fb-vak" id="voorraad-fb"></div>
+          </div>
+        </div>
+      </div>
+      <div class="card mt12">
+        <div class="card-header oranje">⚠ Bestelling plaatsen (Comp. 13)</div>
+        <div class="card-body">
+          <p class="small-grey mb8">Artikelen met voorraad onder het minimum worden automatisch gemarkeerd. Controleer en bevestig de bestelling.</p>
+          <div id="bestelling-preview"></div>
+          <div class="btn-row">
+            <button class="btn btn-primary" onclick="plaatsBestellingVoorraad()">📤 Bestelling doorsturen naar leverancier</button>
+          </div>
+          <div class="fb-vak" id="bestelling-fb"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== KASSA ===== -->
+    <div id="page-kassa" class="page">
+      <div class="page-title"><h2>KASSA</h2><p>Competentie 10: kassa bedienen, betaalmiddelen, wisselgeld, klantgetrouwheid</p></div>
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:14px;align-items:start;">
+        <!-- Linker kolom: producten -->
+        <div>
+          <div class="card mb8">
+            <div class="card-header dark">🔍 Klant selecteren of nieuwe klant</div>
+            <div class="card-body" style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
+              <div class="form-group" style="flex:1;min-width:160px;"><label>Zoek klant (naam of kaartnr.):</label>
+                <input type="text" id="klant-zoek-kassa" placeholder="Type naam..." oninput="zoekKlantKassa()"></div>
+              <div id="klant-zoek-resultaat" style="flex:2;min-width:160px;"></div>
+              <button class="btn btn-ghost btn-sm" onclick="klantAfmelden()">✕ Geen klant</button>
+            </div>
+            <div id="actieve-klant-kassa" style="display:none;background:var(--cvo-pastel-groen);padding:8px 14px;border-top:1px solid #ccc;font-size:12px;display:flex;align-items:center;gap:8px;">
+              <span id="actieve-klant-ico">⭐</span><strong id="actieve-klant-naam2">—</strong>
+              <span class="small-grey" id="actieve-klant-punten">0 punten</span>
+              <span class="pill pill-ok" id="actieve-klant-korting" style="margin-left:auto;display:none;">-2% Klantenkorting</span>
+            </div>
+          </div>
+
+          <div class="card-grid cols2" style="gap:6px;margin-bottom:6px;">
+            <div>
+              <div class="cat-strip">🥦 Vers & Groenten</div>
+              <div class="product-grid-small" id="pg-groenten"></div>
+            </div>
+            <div>
+              <div class="cat-strip">🧀 Zuivel & Eieren</div>
+              <div class="product-grid-small" id="pg-zuivel"></div>
+            </div>
+          </div>
+          <div class="card-grid cols2" style="gap:6px;margin-bottom:6px;">
+            <div>
+              <div class="cat-strip">🥖 Bakkerij & Droog</div>
+              <div class="product-grid-small" id="pg-bakkerij"></div>
+            </div>
+            <div>
+              <div class="cat-strip">🧴 Non-food</div>
+              <div class="product-grid-small" id="pg-nonfood"></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header dark">🎁 Promoties & Acties</div>
+            <div class="card-body" style="display:flex;gap:7px;flex-wrap:wrap;">
+              <button class="btn btn-danger btn-sm" onclick="voegKortingToe(5)">-5%</button>
+              <button class="btn btn-danger btn-sm" onclick="voegKortingToe(10)">-10%</button>
+              <button class="btn btn-danger btn-sm" onclick="voegKortingToe(15)">-15% Promo</button>
+              <button class="btn btn-ghost btn-sm" onclick="voegGeschenkbon()">🎟 Geschenkbon €5</button>
+              <button class="btn btn-ghost btn-sm" onclick="voegKorting2voor1()">2=1 Actie</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rechter kolom: kassascherm -->
+        <div class="kassa-scherm-wrap">
+          <div class="kassa-display">
+            <div class="kd-header">
+              <div class="kd-winkel">🛒 CRESCENDO-MARKT</div>
+              <div class="kd-sub" id="kassa-ts"></div>
+            </div>
+            <div id="kassa-klant-display" class="kd-klant-display"></div>
+            <div id="kassa-bon-rows"><div class="kd-empty">— Leeg —<br>Scan of klik product</div></div>
+            <div class="kd-lijn"></div>
+            <div class="kd-totaal" id="kassa-totaal-display">€ 0,00</div>
+            <div class="kd-aantallen" id="kassa-aantallen-display">0 artikel(en)</div>
+          </div>
+          <div class="kassa-panel">
+            <div class="section-label">Betaalmethode</div>
+            <div class="betaal-grid">
+              <button class="betaal-btn" id="kb-cash" onclick="kiesBetaalKassa('cash')"><span class="bi">💵</span>Cash</button>
+              <button class="betaal-btn" id="kb-bancontact" onclick="kiesBetaalKassa('bancontact')"><span class="bi">💳</span>Bancontact</button>
+              <button class="betaal-btn" id="kb-visa" onclick="kiesBetaalKassa('visa')"><span class="bi">💳</span>Visa/MC</button>
+              <button class="betaal-btn" id="kb-bon" onclick="kiesBetaalKassa('bon')"><span class="bi">🎟</span>Bon</button>
+            </div>
+            <div class="cash-vak" id="cash-vak-kassa">
+              <label>💵 Ontvangen bedrag:</label>
+              <input type="number" id="cash-inp-kassa" placeholder="0,00" step="0.01" oninput="herbereken()">
+              <div class="munten-row">
+                <span class="munt-pill" onclick="addCash(.5)">€0,50</span><span class="munt-pill" onclick="addCash(1)">€1</span>
+                <span class="munt-pill" onclick="addCash(2)">€2</span><span class="munt-pill" onclick="addCash(5)">€5</span>
+                <span class="munt-pill" onclick="addCash(10)">€10</span><span class="munt-pill" onclick="addCash(20)">€20</span>
+                <span class="munt-pill" onclick="addCash(50)">€50</span><span class="munt-pill" onclick="addCash(100)">€100</span>
+              </div>
+              <div class="wg-result" id="wg-res">
+                <div class="wgr-label">Wisselgeld terug:</div>
+                <div class="wgr-val" id="wg-val">€ 0,00</div>
+              </div>
+            </div>
+            <div class="afrekenen-rij">
+              <button class="btn-afrekenen" id="btn-afreken" onclick="afrekenenKassa()" disabled>✓ Afrekenen</button>
+              <button class="btn-annuleer-kassa" onclick="annuleerKassa()">✕</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RETOUREN ===== -->
+    <div id="page-retour" class="page">
+      <div class="page-title"><h2>RETOUREN & DIENST NA VERKOOP</h2><p>Competentie 16 & 17: retouren verwerken, klachten professioneel afhandelen</p></div>
+      <div class="comp-tag">📋 Comp. 16 — Retourartikelen registreren in kassasysteem, commerciële beslissing nemen</div>
+      <div class="card-grid cols2">
+        <div class="card">
+          <div class="card-header dark">↩️ Retourverzoek</div>
+          <div class="card-body">
+            <div class="section-label">Klantgegevens</div>
+            <div class="form-row">
+              <div class="form-group"><label>Naam klant:</label><input type="text" id="ret-klant" placeholder="Naam..."></div>
+              <div class="form-group"><label>Aankoopdatum:</label><input type="date" id="ret-datum"></div>
+            </div>
+            <div class="section-label">Te retourneren artikel</div>
+            <div class="form-row">
+              <div class="form-group"><label>Artikel:</label>
+                <select id="ret-artikel">
+                  <option value="">Kies artikel...</option>
+                  <option value="shampoo|3.99">Shampoo 250ml — €3,99</option>
+                  <option value="melk|1.19">Melk 1L — €1,19</option>
+                  <option value="cornflakes|3.29">Cornflakes 750g — €3,29</option>
+                  <option value="kaas|3.49">Kaas 200g — €3,49</option>
+                  <option value="boter|2.79">Boter 250g — €2,79</option>
+                  <option value="wasmiddel|6.49">Wasmiddel — €6,49</option>
+                </select></div>
+              <div class="form-group"><label>Bon aanwezig?</label>
+                <select id="ret-bon"><option value="">Kies...</option><option value="ja">✅ Ja, originele bon</option><option value="nee">❌ Nee, geen bon</option><option value="foto">📱 Foto/digitaal</option></select></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Reden retour:</label>
+                <select id="ret-reden"><option value="">Kies reden...</option>
+                  <option value="defect">🔧 Artikel defect/beschadigd</option>
+                  <option value="fout">📦 Verkeerd artikel</option>
+                  <option value="spijt">💭 Van gedachte veranderd</option>
+                  <option value="verlopen">📅 Vervaldatum overschreden</option>
+                  <option value="onvolledig">🔍 Onvolledig product</option></select></div>
+              <div class="form-group"><label>Gekozen oplossing:</label>
+                <select id="ret-oplossing"><option value="">Kies oplossing...</option>
+                  <option value="terugbetaling">💶 Terugbetaling</option>
+                  <option value="ruilen">🔄 Ruilen voor zelfde artikel</option>
+                  <option value="bon">🎟 Tegoedbon uitreiken</option>
+                  <option value="herstelling">🔨 Opsturen voor herstelling</option>
+                  <option value="weigeren">❌ Retour weigeren (buiten termijn)</option>
+                  <option value="leidinggevende">👔 Leidinggevende raadplegen</option></select></div>
+            </div>
+            <div class="form-group"><label>Professionele mededeling aan klant:</label>
+              <textarea id="ret-opmerking" rows="3" placeholder="Schrijf een professionele, klantgerichte reactie..."></textarea></div>
+            <div class="btn-row">
+              <button class="btn btn-success" onclick="verwerkRetour()">✓ Retour verwerken & registreren</button>
+              <button class="btn btn-ghost" onclick="resetRetour()">↺ Reset</button>
+            </div>
+            <div class="fb-vak" id="ret-fb"></div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-header teal">📘 Retourprocedure & Wetgeving</div>
+            <div class="card-body" style="font-size:12px;line-height:1.75;">
+              <strong>LAST-methode (klachtenbehandeling):</strong>
+              <div style="background:var(--cvo-lichtgrijs);border-radius:4px;padding:10px;margin:8px 0;">
+                <strong style="color:var(--cluster-verkoop)">L</strong>isten — Laat klant volledig uitspreken<br>
+                <strong style="color:var(--cluster-verkoop)">A</strong>pologize — Excuses voor het ongemak<br>
+                <strong style="color:var(--cluster-verkoop)">S</strong>olve — Zoek een passende oplossing<br>
+                <strong style="color:var(--cluster-verkoop)">T</strong>hank — Bedank klant voor melding
+              </div>
+              <strong>Wettelijk kader:</strong><br>
+              • <strong>2 jaar</strong> wettelijke garantie bij defecte producten (consumentenkoop)<br>
+              • <strong>14 dagen</strong> herroepingsrecht bij online aankopen<br>
+              • Gewone terugname: enkel conform winkelbeleid<br><br>
+              <strong>Fraudepreventie (comp. 10):</strong><br>
+              Controleer altijd of kassabon overeenkomt met artikel en datum. Bij twijfel: leidinggevende.
+            </div>
+          </div>
+          <div class="card mt8">
+            <div class="card-header dark">📋 Recente retouren</div>
+            <div class="card-body"><div id="retour-log" style="font-size:11px;line-height:1.9;">Nog geen retouren verwerkt.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== KLANTENDOSSIERS ===== -->
+    <div id="page-klanten" class="page">
+      <div class="page-title"><h2>KLANTENDOSSIERS</h2><p>Klantgegevens opzoeken, aanmaken en beheren</p></div>
+      <div class="card-grid cols2">
+        <div class="card">
+          <div class="card-header dark">👥 Klantenoverzicht</div>
+          <div class="card-body">
+            <div class="form-group mb8"><input type="text" id="klant-zoek" placeholder="🔍 Zoek op naam of e-mail..." oninput="renderKlantenLijst()"></div>
+            <div id="klanten-lijst"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header teal" id="klant-detail-titel">👤 Klantdetail</div>
+          <div class="card-body" id="klant-detail-body">
+            <p class="small-grey">Selecteer een klant uit de lijst om details te zien.</p>
+          </div>
+        </div>
+      </div>
+      <div class="card mt8">
+        <div class="card-header dark">➕ Nieuwe klant aanmaken</div>
+        <div class="card-body">
+          <div class="form-row">
+            <div class="form-group"><label>Voornaam:</label><input type="text" id="nieuw-voornaam" placeholder="Voornaam"></div>
+            <div class="form-group"><label>Achternaam:</label><input type="text" id="nieuw-achternaam" placeholder="Achternaam"></div>
+            <div class="form-group"><label>E-mail:</label><input type="email" id="nieuw-email" placeholder="naam@voorbeeld.be"></div>
+            <div class="form-group"><label>Telefoon:</label><input type="tel" id="nieuw-tel" placeholder="04xx..."></div>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-success" onclick="maakKlantAan()">✓ Klant aanmaken & loyaliteitskaart activeren</button>
+          </div>
+          <div class="fb-vak" id="klant-fb"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== LOYALITEITSKAART ===== -->
+    <div id="page-loyaliteit" class="page">
+      <div class="page-title"><h2>LOYALITEITSKAART</h2><p>Comp. 10: klantgetrouwheidssystemen correct toepassen</p></div>
+      <div class="comp-tag">📋 Comp. 10 — Klantgetrouwheidssystemen, kortingen en geschenkbonnen correct toepassen</div>
+      <div class="card-grid cols3" id="loyaliteit-stats">
+        <div class="kpi-tile"><div class="kt-ico">⭐</div><div class="kt-val" id="loy-leden">0</div><div class="kt-label">Actieve leden</div></div>
+        <div class="kpi-tile"><div class="kt-ico">🏆</div><div class="kt-val" id="loy-punten">0</div><div class="kt-label">Totale punten uitgegeven</div></div>
+        <div class="kpi-tile"><div class="kt-ico">💶</div><div class="kt-val" id="loy-korting">€ 0,00</div><div class="kt-label">Besparingen voor klanten</div></div>
+      </div>
+      <div class="card mt12">
+        <div class="card-header teal">⭐ Hoe werkt het loyaliteitssysteem?</div>
+        <div class="card-body">
+          <div class="card-grid cols2">
+            <div>
+              <div class="info-blok">
+                <strong>Punten verdienen:</strong><br>
+                1 punt per € 1,00 besteed<br><br>
+                <strong>Niveaus:</strong><br>
+                🥉 Brons: 0–99 punten → -2%<br>
+                🥈 Zilver: 100–299 punten → -3%<br>
+                🥇 Goud: 300+ punten → -5%<br><br>
+                <strong>Bij de kassa:</strong> scan klantenkaart, korting wordt automatisch toegepast.
+              </div>
+            </div>
+            <div>
+              <div class="section-label">Puntensaldo opzoeken</div>
+              <div class="form-group mb8"><label>Kaartnummer of naam:</label>
+                <input type="text" id="loy-zoek" placeholder="Zoek klant..." oninput="zoekLoyaliteit()"></div>
+              <div id="loy-resultaat"></div>
+            </div>
+          </div>
+          <div class="section-label mt12">Alle loyaliteitsleden</div>
+          <div id="loy-tabel"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== RAPPORTAGE ===== -->
+    <div id="page-rapportage" class="page">
+      <div class="page-title"><h2>RAPPORTAGE & STATISTIEKEN</h2><p>Dagcijfers, verkoopanalyse en voorraadrapporten</p></div>
+      <div class="card-grid cols4 mb12">
+        <div class="kpi-tile"><div class="kt-ico">💰</div><div class="kt-val" id="rap-omzet">€ 0,00</div><div class="kt-label">Dag-omzet</div></div>
+        <div class="kpi-tile"><div class="kt-ico">🧾</div><div class="kt-val" id="rap-trans">0</div><div class="kt-label">Transacties</div></div>
+        <div class="kpi-tile"><div class="kt-ico">📊</div><div class="kt-val" id="rap-gemiddeld">€ 0,00</div><div class="kt-label">Gem. bon</div></div>
+        <div class="kpi-tile"><div class="kt-ico">🏆</div><div class="kt-val" id="rap-top">—</div><div class="kt-label">Bestseller</div></div>
+      </div>
+      <div class="card-grid cols2">
+        <div class="card">
+          <div class="card-header dark">📋 Verkoopoverzicht vandaag</div>
+          <div class="card-body">
+            <table class="data-table" id="rap-tabel">
+              <thead><tr><th>Artikel</th><th>Aantal</th><th class="text-right">Omzet</th></tr></thead>
+              <tbody id="rap-tabel-body"><tr><td colspan="3" style="text-align:center;color:var(--cvo-grijs);padding:16px;">Nog geen verkopen geregistreerd</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header dark">💳 Betaalmethodes</div>
+          <div class="card-body" id="rap-betaalmethodes">
+            <p class="small-grey">Nog geen data.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DAGAFSLUITING ===== -->
+    <div id="page-dagafsluiting" class="page">
+      <div class="page-title"><h2>DAGAFSLUITING</h2><p>Comp. 10: kassa tellen bij sluiting, Z-rapport aanmaken</p></div>
+      <div class="comp-tag">📋 Comp. 10 — Kassa controleren bij begin werkdag en tellen bij sluiting</div>
+      <div class="card-grid cols2">
+        <div class="card">
+          <div class="card-header dark">🔢 Kasoptelformulier</div>
+          <div class="card-body">
+            <p class="small-grey mb12">Tel het geld in de kassalade en vul het formulier in. Begin met de biljetten, dan de munten.</p>
+            <table class="data-table" id="kastelling-tabel">
+              <thead><tr><th>Coupure</th><th>Aantal stuks</th><th class="text-right">Deelbedrag</th></tr></thead>
+              <tbody id="kastelling-body"></tbody>
+              <tfoot><tr><td colspan="2" style="padding:8px 11px;font-weight:700;font-size:12px;">TOTAAL GETELD</td><td class="td-num" style="font-size:15px;" id="kastelling-totaal">€ 0,00</td></tr></tfoot>
+            </table>
+            <div class="btn-row mt8">
+              <button class="btn btn-primary" onclick="hertelKas()">🔄 Hertellen</button>
+              <button class="btn btn-success" onclick="sluitDagAf()">🔒 Dag afsluiten & Z-rapport</button>
+            </div>
+            <div class="fb-vak" id="dag-fb"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header groen" id="zrap-header">📄 Z-Rapport</div>
+          <div class="card-body">
+            <div id="z-rapport-inhoud">
+              <div class="z-rapport-papier">
+                <div class="zr-center zr-bold">Z-RAPPORT — CRESCENDO-MARKT</div>
+                <div class="zr-subtitel" id="zr-ts"></div>
+                <div class="zr-lijn"></div>
+                <div class="zr-row"><span>Beginkassa:</span><span class="mono">€ 225,50</span></div>
+                <div class="zr-row"><span>Dag-omzet (totaal):</span><span class="mono" id="zr-omzet">€ —</span></div>
+                <div class="zr-row"><span>Pinbetalingen:</span><span class="mono" id="zr-pin">€ —</span></div>
+                <div class="zr-row"><span>Cash-omzet:</span><span class="mono" id="zr-cash-omzet">€ —</span></div>
+                <div class="zr-lijn"></div>
+                <div class="zr-row"><span>Verwachte eindkassa:</span><span class="mono" id="zr-verwacht">€ —</span></div>
+                <div class="zr-row"><span>Geteld bedrag:</span><span class="mono" id="zr-geteld">€ —</span></div>
+                <div class="zr-row zr-totaal zr-bold" id="zr-verschil-rij"><span>Verschil (± ):</span><span class="mono" id="zr-verschil">€ —</span></div>
+                <div class="zr-lijn"></div>
+                <div class="zr-row"><span>Aantal transacties:</span><span class="mono" id="zr-trans">—</span></div>
+                <div class="zr-row"><span>Gem. bonbedrag:</span><span class="mono" id="zr-gem">—</span></div>
+                <div class="zr-lijn"></div>
+                <div class="zr-center" style="font-size:9px;color:#999;" id="zr-afsluit-ts">Rapport nog niet aangemaakt</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- TICKET MODAL -->
+<div class="modal-overlay" id="ticket-modal">
+  <div class="modal-box">
+    <h3>✅ Transactie voltooid</h3>
+    <div id="ticket-papier" style="background:#fffef8;border:1px solid #e0ddd0;border-radius:3px;padding:14px;font-family:'Courier New',monospace;font-size:11px;line-height:1.9;margin-bottom:14px;box-shadow:inset 0 0 0 3px #f5f3eb;max-height:380px;overflow-y:auto;"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="sluitTicket();nieuwTransactie()">🛒 Nieuwe klant</button>
+      <button class="btn btn-ghost" onclick="sluitTicket()">Sluiten</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOCENTEN MODAL -->
+<div class="modal-overlay" id="docenten-modal">
+  <div class="modal-box" style="max-width:700px;">
+    <h3>🎓 Docentenpaneel — Cursistenopvolging</h3>
+    <div class="info-blok mb8">Overzicht van de voortgang per cursist. Simuleer een andere cursist door de naam te wijzigen.</div>
+    <div id="docenten-inhoud"></div>
+    <div class="btn-row mt12">
+      <div class="form-group" style="flex:1;"><label>Cursist aanmelden als:</label>
+        <input type="text" id="cursist-naam-inp" placeholder="Naam cursist..." value="Cursist"></div>
+      <button class="btn btn-success" onclick="aanmeldenCursist()" style="align-self:flex-end;">Aanmelden</button>
+    </div>
+    <div class="btn-row"><button class="btn btn-ghost" onclick="sluitDocenten()">Sluiten</button></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  DATA
+// ═══════════════════════════════════════════════
+const PRODUCTEN = [
+  {id:'P001',naam:'Appel',ico:'🍎',prijs:.49,cat:'groenten',btw:6,min:10},
+  {id:'P002',naam:'Banaan',ico:'🍌',prijs:.35,cat:'groenten',btw:6,min:10},
+  {id:'P003',naam:'Broccoli',ico:'🥦',prijs:1.29,cat:'groenten',btw:6,min:8},
+  {id:'P004',naam:'Wortelen',ico:'🥕',prijs:.99,cat:'groenten',btw:6,min:8},
+  {id:'P005',naam:'Tomaten',ico:'🍅',prijs:1.89,cat:'groenten',btw:6,min:6},
+  {id:'P006',naam:'Aardappelen',ico:'🥔',prijs:2.49,cat:'groenten',btw:6,min:6},
+  {id:'P010',naam:'Melk 1L',ico:'🥛',prijs:1.19,cat:'zuivel',btw:6,min:15},
+  {id:'P011',naam:'Boter 250g',ico:'🧈',prijs:2.79,cat:'zuivel',btw:6,min:10},
+  {id:'P012',naam:'Eieren 6st',ico:'🥚',prijs:2.29,cat:'zuivel',btw:6,min:12},
+  {id:'P013',naam:'Kaas 200g',ico:'🧀',prijs:3.49,cat:'zuivel',btw:6,min:8},
+  {id:'P020',naam:'Wit brood',ico:'🥖',prijs:1.99,cat:'bakkerij',btw:6,min:8},
+  {id:'P021',naam:'Volkoren',ico:'🍞',prijs:2.19,cat:'bakkerij',btw:6,min:6},
+  {id:'P022',naam:'Pasta 500g',ico:'🍝',prijs:1.29,cat:'bakkerij',btw:6,min:10},
+  {id:'P023',naam:'Rijst 1kg',ico:'🍚',prijs:1.79,cat:'bakkerij',btw:6,min:8},
+  {id:'P024',naam:'Cornflakes',ico:'🥣',prijs:3.29,cat:'bakkerij',btw:6,min:6},
+  {id:'P030',naam:'Shampoo',ico:'🧴',prijs:3.99,cat:'nonfood',btw:21,min:6},
+  {id:'P031',naam:'Tandpasta',ico:'🪥',prijs:2.49,cat:'nonfood',btw:21,min:8},
+  {id:'P032',naam:'Afwasmiddel',ico:'🧼',prijs:1.89,cat:'nonfood',btw:21,min:8},
+  {id:'P033',naam:'Wasmiddel',ico:'👕',prijs:6.49,cat:'nonfood',btw:21,min:4},
+];
+
+let VOORRAAD = {};
+PRODUCTEN.forEach(p => {
+  const base = Math.floor(Math.random()*12)+3;
+  VOORRAAD[p.id] = { rek: base, magazijn: Math.floor(Math.random()*20)+10 };
+});
+// Zet een paar laag voor realisme
+VOORRAAD['P003'].rek = 2; VOORRAAD['P010'].rek = 3; VOORRAAD['P033'].rek = 1;
+
+let KLANTEN = [
+  {id:'K001',naam:'An Peeters',email:'an.peeters@gmail.com',tel:'0477123456',punten:245,niveau:'zilver',aankopen:18,lid_sinds:'2023-03-12'},
+  {id:'K002',naam:'Johan Claes',email:'j.claes@telenet.be',tel:'0468987654',punten:58,niveau:'brons',aankopen:7,lid_sinds:'2024-01-05'},
+  {id:'K003',naam:'Marie Bogaert',email:'m.bogaert@hotmail.com',tel:'0499556677',punten:412,niveau:'goud',aankopen:34,lid_sinds:'2022-11-20'},
+  {id:'K004',naam:'Tom Janssen',email:'tomjanssen@outlook.be',tel:'0488223344',punten:125,niveau:'zilver',aankopen:11,lid_sinds:'2023-08-07'},
+];
+
+// Kassa state
+let kassaMand = [], kassaBetaal = null, kassaKlant = null;
+let kassaKorting = 0, kassaGeschenkbon = 0;
+let dagOmzet = 0, dagTransacties = 0, dagKlanten = 0;
+let verkoopData = {}, betaalData = {cash:0,bancontact:0,visa:0,bon:0};
+let activiteitLog = [];
+let retourLog = [];
+let dagAfgesloten = false;
+let kastellingData = {};
+
+// Kastelling coupures
+const COUPURES = [
+  {label:'€ 100',val:100},{label:'€ 50',val:50},{label:'€ 20',val:20},
+  {label:'€ 10',val:10},{label:'€ 5',val:5},{label:'€ 2',val:2},
+  {label:'€ 1',val:1},{label:'€ 0,50',val:.5},{label:'€ 0,20',val:.2},
+  {label:'€ 0,10',val:.1},{label:'€ 0,05',val:.05},{label:'€ 0,02',val:.02},{label:'€ 0,01',val:.01},
+];
+COUPURES.forEach(c => kastellingData[c.val] = 0);
+
+// Levering data
+const LEVERING_ITEMS = [
+  {id:'P010',naam:'Melk 1L',ico:'🥛',besteld:24,geleverd:24,eenheidsprijs:.65},
+  {id:'P003',naam:'Broccoli',ico:'🥦',besteld:12,geleverd:10,eenheidsprijs:.55},
+  {id:'P013',naam:'Kaas 200g',ico:'🧀',besteld:16,geleverd:16,eenheidsprijs:1.89},
+  {id:'P033',naam:'Wasmiddel',ico:'👕',besteld:8,geleverd:8,eenheidsprijs:3.20},
+  {id:'P022',naam:'Pasta 500g',ico:'🍝',besteld:20,geleverd:20,eenheidsprijs:.59},
+];
+
+// Competentie tracking
+let compStatus = {
+  'levering': 'open', 'voorraad': 'open', 'kassa': 'open',
+  'retour': 'open', 'klanten': 'open', 'dagafsluiting': 'open'
+};
+let compScores = { levering:0, voorraad:0, kassa:0, retour:0, klanten:0, dagafsluiting:0 };
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+function init() {
+  document.getElementById('dashboard-datum').textContent =
+    new Date().toLocaleDateString('nl-BE',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) + ' — Crescendo-Markt, Mechelen';
+  document.getElementById('kassa-ts').textContent = new Date().toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('zr-ts').textContent = new Date().toLocaleDateString('nl-BE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  renderProductGrids();
+  renderLevering();
+  renderVoorraad();
+  renderKlantenLijst();
+  renderLoyaliteitTabel();
+  renderKastellingTabel();
+  renderCompoverzicht();
+  renderDocentenInhoud();
+  updateDashboardKPIs();
+  logActiviteit('Systeem opgestart — welkom in WinkelSim 2.0');
+}
+
+function f(n){ return '€ '+n.toFixed(2).replace('.',','); }
+function nu(){ return new Date().toLocaleTimeString('nl-BE',{hour:'2-digit',minute:'2-digit'}); }
+
+function toonToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='toast '+(type?type:'');
+  setTimeout(()=>t.classList.add('show'),10);
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+function logActiviteit(tekst) {
+  activiteitLog.unshift(`<span style="color:var(--cvo-grijs)">${nu()}</span> — ${tekst}`);
+  if(activiteitLog.length>20) activiteitLog.pop();
+  const el = document.getElementById('activiteit-log');
+  if(el) el.innerHTML = activiteitLog.join('<br>');
+}
+
+function gaNaar(pagina, navEl) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+pagina).classList.add('active');
+  if(navEl) navEl.classList.add('active');
+  if(pagina==='rapportage') updateRapportage();
+  if(pagina==='loyaliteit') renderLoyaliteitTabel();
+}
+function gaNaarEnKlik(p) { gaNaar(p, document.querySelector('.nav-item:nth-child(2)')); }
+
+// ═══════════════════════════════════════════════
+//  PRODUCT GRIDS
+// ═══════════════════════════════════════════════
+function renderProductGrids() {
+  const cats = {groenten:'pg-groenten',zuivel:'pg-zuivel',bakkerij:'pg-bakkerij',nonfood:'pg-nonfood'};
+  Object.entries(cats).forEach(([cat,elId])=>{
+    const el = document.getElementById(elId);
+    el.innerHTML = '';
+    PRODUCTEN.filter(p=>p.cat===cat).forEach(p=>{
+      const vr = VOORRAAD[p.id]?.rek || 0;
+      const cls = vr===0?'geen-voorraad':vr<=3?'laag-voorraad':'';
+      const btn = document.createElement('button');
+      btn.className = 'prod-btn '+cls;
+      btn.innerHTML = `<span class="p-ico">${p.ico}</span><span class="p-naam">${p.naam}</span><span class="p-prijs">${f(p.prijs)}</span><span class="p-voorraad">${vr}</span>`;
+      btn.onclick = () => { if(vr>0) voegToeKassa(p); else toonToast('❌ '+p.naam+' is uitverkocht','nok'); };
+      el.appendChild(btn);
+    });
+  });
+  updateVoorraadBadge();
+}
+
+// ═══════════════════════════════════════════════
+//  KASSA LOGICA
+// ═══════════════════════════════════════════════
+function voegToeKassa(p) {
+  const b = kassaMand.find(x=>x.id===p.id);
+  if(b) b.qty++; else kassaMand.push({...p, qty:1});
+  updateKassaDisplay();
+}
+function voegKortingToe(pct){ kassaKorting=pct; updateKassaDisplay(); toonToast('✅ Korting '+pct+'% toegepast'); }
+function voegGeschenkbon(){ kassaGeschenkbon=5; updateKassaDisplay(); toonToast('🎟 Geschenkbon €5 toegepast'); }
+function voegKorting2voor1(){
+  if(kassaMand.length>0){ kassaMand[0].actie='2voor1'; updateKassaDisplay(); toonToast('✅ 2=1 actie op '+kassaMand[0].naam); }
+}
+
+function berekenKassaTotaal() {
+  let sub = kassaMand.reduce((s,x)=>{
+    let p = x.prijs * x.qty;
+    if(x.actie==='2voor1') p = x.prijs * Math.ceil(x.qty/2);
+    return s+p;
+  },0);
+  let kd = kassaKorting>0 ? sub*(kassaKorting/100) : 0;
+  let kk = (kassaKlant && kassaKlant.niveau!=='geen') ? (sub-kd)*getKlantKorting(kassaKlant) : 0;
+  let gbon = kassaGeschenkbon;
+  let tot = Math.max(0, sub-kd-kk-gbon);
+  return {sub,kd,kk,gbon,tot};
+}
+
+function getKlantKorting(k) {
+  if(!k) return 0;
+  if(k.niveau==='goud') return 0.05;
+  if(k.niveau==='zilver') return 0.03;
+  return 0.02;
+}
+
+function updateKassaDisplay() {
+  const {sub,kd,kk,gbon,tot} = berekenKassaTotaal();
+  const rows = document.getElementById('kassa-bon-rows');
+  if(!kassaMand.length){
+    rows.innerHTML='<div class="kd-empty">— Leeg —<br>Scan of klik product</div>';
+  } else {
+    let html='';
+    kassaMand.forEach(x=>{
+      const prijs = x.actie==='2voor1' ? x.prijs*Math.ceil(x.qty/2) : x.prijs*x.qty;
+      html+=`<div class="kd-row"><span>${x.ico} ${x.naam}${x.actie?'<sup>2=1</sup>':''} ×${x.qty}</span><span>${f(prijs)}</span></div>`;
+    });
+    if(kd>0) html+=`<div class="kd-row korting-rij"><span>Korting ${kassaKorting}%</span><span>-${f(kd)}</span></div>`;
+    if(kk>0) html+=`<div class="kd-row korting-rij"><span>Klantenkaart ${kassaKlant.naam.split(' ')[0]}</span><span>-${f(kk)}</span></div>`;
+    if(gbon>0) html+=`<div class="kd-row korting-rij"><span>Geschenkbon</span><span>-${f(gbon)}</span></div>`;
+    html+=`<div class="kd-lijn"></div><div class="kd-row sub-rij"><span>SUBTOTAAL</span><span>${f(sub)}</span></div>`;
+    rows.innerHTML=html;
+  }
+  document.getElementById('kassa-totaal-display').textContent = f(tot);
+  const n = kassaMand.reduce((s,x)=>s+x.qty,0);
+  document.getElementById('kassa-aantallen-display').textContent = n+' artikel(en)';
+  if(kassaBetaal==='cash') herbereken();
+  const ok = kassaMand.length>0 && kassaBetaal!==null;
+  document.getElementById('btn-afreken').disabled = !ok;
+}
+
+function kiesBetaalKassa(type) {
+  kassaBetaal = type;
+  ['cash','bancontact','visa','bon'].forEach(t=>document.getElementById('kb-'+t).classList.toggle('sel',t===type));
+  document.getElementById('cash-vak-kassa').classList.toggle('open',type==='cash');
+  if(type!=='cash') document.getElementById('wg-res').className='wg-result';
+  updateKassaDisplay();
+}
+
+function addCash(b) {
+  const inp=document.getElementById('cash-inp-kassa');
+  inp.value=(parseFloat(inp.value||0)+b).toFixed(2);
+  herbereken();
+}
+
+function herbereken() {
+  const {tot} = berekenKassaTotaal();
+  const ontvangen = parseFloat(document.getElementById('cash-inp-kassa').value)||0;
+  const res = document.getElementById('wg-res');
+  if(ontvangen>=tot && ontvangen>0){
+    const wg = ontvangen-tot;
+    document.getElementById('wg-val').textContent = f(wg);
+    res.className='wg-result ok';
+    document.getElementById('btn-afreken').disabled=kassaMand.length===0;
+  } else if(ontvangen>0) {
+    document.getElementById('wg-val').textContent = 'Tekort: '+f(tot-ontvangen);
+    res.className='wg-result nok';
+    document.getElementById('btn-afreken').disabled=true;
+  } else {
+    res.className='wg-result';
+    document.getElementById('btn-afreken').disabled=kassaMand.length===0;
+  }
+}
+
+function afrekenenKassa() {
+  const {sub,kd,kk,gbon,tot} = berekenKassaTotaal();
+  const ontvangen = kassaBetaal==='cash' ? parseFloat(document.getElementById('cash-inp-kassa').value)||0 : tot;
+  if(kassaBetaal==='cash' && ontvangen<tot){ toonToast('❌ Onvoldoende bedrag','nok'); return; }
+  const wg = kassaBetaal==='cash' ? ontvangen-tot : 0;
+
+  // Voorraad verlagen
+  kassaMand.forEach(x=>{
+    if(VOORRAAD[x.id]) VOORRAAD[x.id].rek = Math.max(0, VOORRAAD[x.id].rek - x.qty);
+    verkoopData[x.naam] = (verkoopData[x.naam]||{naam:x.naam,ico:x.ico,qty:0,omzet:0});
+    verkoopData[x.naam].qty += x.qty;
+    verkoopData[x.naam].omzet += x.prijs*x.qty;
+  });
+
+  // Statistieken
+  dagOmzet += tot;
+  dagTransacties++;
+  dagKlanten++;
+  betaalData[kassaBetaal] = (betaalData[kassaBetaal]||0) + tot;
+  if(kassaKlant){ kassaKlant.punten += Math.floor(tot); kassaKlant.aankopen++; }
+
+  // Ticket
+  toonTicket(sub,kd,kk,gbon,tot,kassaBetaal,ontvangen,wg);
+  logActiviteit(`Transactie #${dagTransacties}: ${f(tot)} via ${kassaBetaal}${kassaKlant?' ('+kassaKlant.naam+')':''}`);
+
+  // Competentie
+  compScores.kassa = Math.min(100, compScores.kassa + 15);
+  compStatus.kassa = compScores.kassa>=60 ? 'behaald':'in-progress';
+  updateSidebar();
+  renderProductGrids();
+  updateDashboardKPIs();
+}
+
+function toonTicket(sub,kd,kk,gbon,tot,methode,ontvangen,wg) {
+  const mn = {cash:'Cash',bancontact:'Bancontact',visa:'Visa/MC',bon:'Geschenkbon'};
+  let h = `<div style="text-align:center;font-weight:bold;">CRESCENDO-MARKT</div>
+<div style="text-align:center;font-size:9px;color:#888;">Vaartdijk 86 — 2800 Mechelen | BTW: BE0123.456.789</div>
+<div style="text-align:center;font-size:9px;color:#888;margin-bottom:5px;">${new Date().toLocaleString('nl-BE')}</div>
+<div style="border-top:1px dashed #bbb;margin:5px 0;"></div>`;
+  kassaMand.forEach(x=>{
+    const rp=x.actie==='2voor1'?x.prijs*Math.ceil(x.qty/2):x.prijs*x.qty;
+    h+=`<div style="display:flex;justify-content:space-between;">${x.ico} ${x.naam}${x.actie?' (2=1)':''} ×${x.qty}<span>${f(rp)}</span></div>`;
+  });
+  h+=`<div style="border-top:1px dashed #bbb;margin:5px 0;"></div>`;
+  if(kd>0) h+=`<div style="display:flex;justify-content:space-between;color:#cc0000;">Korting<span>-${f(kd)}</span></div>`;
+  if(kk>0) h+=`<div style="display:flex;justify-content:space-between;color:#cc0000;">Klantenkaart<span>-${f(kk)}</span></div>`;
+  if(gbon>0) h+=`<div style="display:flex;justify-content:space-between;color:#cc0000;">Geschenkbon<span>-${f(gbon)}</span></div>`;
+  h+=`<div style="border-top:1px dashed #bbb;margin:5px 0;"></div>
+<div style="display:flex;justify-content:space-between;font-weight:bold;font-size:14px;">TOTAAL<span>${f(tot)}</span></div>
+<div style="display:flex;justify-content:space-between;">Betaald (${mn[methode]})<span>${f(ontvangen)}</span></div>`;
+  if(methode==='cash') h+=`<div style="display:flex;justify-content:space-between;font-weight:bold;">Wisselgeld<span>${f(wg)}</span></div>`;
+  const btw6 = kassaMand.filter(x=>x.btw===6).reduce((s,x)=>s+x.prijs*x.qty,0);
+  const btw21 = kassaMand.filter(x=>x.btw===21).reduce((s,x)=>s+x.prijs*x.qty,0);
+  h+=`<div style="border-top:1px dashed #bbb;margin:5px 0;"></div>
+<div style="font-size:9px;color:#888;display:flex;justify-content:space-between;"><span>BTW 6%</span><span>${f(btw6*0.06/1.06)}</span></div>
+<div style="font-size:9px;color:#888;display:flex;justify-content:space-between;"><span>BTW 21%</span><span>${f(btw21*0.21/1.21)}</span></div>`;
+  if(kassaKlant) h+=`<div style="border-top:1px dashed #bbb;margin:5px 0;"></div><div style="text-align:center;font-size:9px;">⭐ ${kassaKlant.naam} — ${kassaKlant.punten} punten — niveau: ${kassaKlant.niveau}</div>`;
+  h+=`<div style="border-top:1px dashed #bbb;margin:5px 0;"></div><div style="text-align:center;font-size:9px;">Bedankt voor uw bezoek! — www.crescendo-cvo.be</div>`;
+  document.getElementById('ticket-papier').innerHTML=h;
+  document.getElementById('ticket-modal').classList.add('open');
+}
+
+function sluitTicket(){ document.getElementById('ticket-modal').classList.remove('open'); }
+function nieuwTransactie(){
+  kassaMand=[]; kassaBetaal=null; kassaKorting=0; kassaGeschenkbon=0;
+  ['cash','bancontact','visa','bon'].forEach(t=>document.getElementById('kb-'+t).classList.remove('sel'));
+  document.getElementById('cash-vak-kassa').classList.remove('open');
+  document.getElementById('cash-inp-kassa').value='';
+  document.getElementById('wg-res').className='wg-result';
+  updateKassaDisplay();
+}
+function annuleerKassa(){ nieuwTransactie(); toonToast('Transactie geannuleerd'); }
+
+// Klant zoeken voor kassa
+function zoekKlantKassa(){
+  const q=document.getElementById('klant-zoek-kassa').value.toLowerCase();
+  const res=document.getElementById('klant-zoek-resultaat');
+  if(q.length<2){ res.innerHTML=''; return; }
+  const gevonden=KLANTEN.filter(k=>k.naam.toLowerCase().includes(q));
+  if(!gevonden.length){ res.innerHTML='<span class="small-grey">Geen klant gevonden.</span>'; return; }
+  res.innerHTML=gevonden.map(k=>`<button class="btn btn-ghost btn-sm" onclick="selecteerKlantKassa('${k.id}')">${k.naam} — ⭐ ${k.punten}pt</button>`).join(' ');
+}
+function selecteerKlantKassa(id){
+  kassaKlant=KLANTEN.find(k=>k.id===id);
+  document.getElementById('actieve-klant-kassa').style.display='flex';
+  document.getElementById('actieve-klant-naam2').textContent=kassaKlant.naam;
+  document.getElementById('actieve-klant-punten').textContent=kassaKlant.punten+' punten';
+  document.getElementById('actieve-klant-korting').style.display='inline-block';
+  document.getElementById('actieve-klant-korting').textContent='-'+(getKlantKorting(kassaKlant)*100)+'% Klantenkorting';
+  document.getElementById('klant-zoek-kassa').value='';
+  document.getElementById('klant-zoek-resultaat').innerHTML='';
+  document.getElementById('kassa-klant-display').textContent='👤 '+kassaKlant.naam;
+  updateKassaDisplay();
+  toonToast('⭐ '+kassaKlant.naam+' aangemeld','ok');
+}
+function klantAfmelden(){
+  kassaKlant=null;
+  document.getElementById('actieve-klant-kassa').style.display='none';
+  document.getElementById('kassa-klant-display').textContent='';
+  updateKassaDisplay();
+}
+
+// ═══════════════════════════════════════════════
+//  LEVERING
+// ═══════════════════════════════════════════════
+function renderLevering(){
+  document.getElementById('lever-datum').textContent = new Date().toLocaleDateString('nl-BE');
+  const items=document.getElementById('levering-items');
+  items.innerHTML='';
+  let afwijking=false, afwTekst='';
+  LEVERING_ITEMS.forEach(item=>{
+    const verschil=item.geleverd-item.besteld;
+    const ok=verschil===0;
+    if(!ok){ afwijking=true; afwTekst+=`${item.naam}: besteld ${item.besteld}, geleverd ${item.geleverd} (${verschil>0?'+':''}${verschil}). `; }
+    items.innerHTML+=`<div class="levering-item"><span class="li-ico">${item.ico}</span><div class="li-info"><div class="li-naam">${item.naam}</div><div class="li-detail">Besteld: ${item.besteld} × ${f(item.eenheidsprijs)}</div></div><div><div class="li-qty">${item.geleverd} geleverd</div><span class="pill ${ok?'pill-ok':'pill-warn'}">${ok?'✓ OK':'⚠ Verschil'}</span></div></div>`;
+  });
+  if(afwijking){
+    document.getElementById('lever-waarschuwing').style.display='block';
+    document.getElementById('lever-afwijking-tekst').textContent=afwTekst;
+    const controle=document.getElementById('levering-controle-items');
+    controle.innerHTML=`<div class="warn-blok"><strong>Afwijking gedetecteerd!</strong><br>${afwTekst}<br>Wat doe je?</div>`;
+  }
+  // Controle formulier items
+  const ctrl=document.getElementById('levering-controle-items');
+  if(!ctrl.innerHTML){
+    ctrl.innerHTML=`<div class="info-blok">Alle aantallen komen overeen met de bestelbon. Voer de kwaliteitscontrole uit.</div>`;
+  }
+}
+
+function verwerkLevering(){
+  const vp=document.getElementById('lever-verpakking').value;
+  const vs=document.getElementById('lever-versheid').value;
+  const tmp=document.getElementById('lever-temp').value;
+  const act=document.getElementById('lever-actie').value;
+  const fb=document.getElementById('lever-fb');
+
+  if(!vp||!vs||!act){ fb.className='fb-vak nok'; fb.textContent='⚠ Vul alle controles in.'; return; }
+
+  let score=0, fbtekst='';
+  if(vp==='ok') score++;
+  if(vs==='ok') score++;
+  if(tmp==='ok'||tmp==='nvt') score++;
+  if(act==='leidinggevende'||act==='deels') score++; // Correct want er is een afwijking
+  else if(act==='aanvaarden') { score+=0; fbtekst='⚠ Tip: er was een afwijking in het geleverde aantal. Je had de leidinggevende moeten raadplegen of deels weigeren. '; }
+  else if(act==='weigeren') score++;
+
+  LEVERING_ITEMS.forEach(item=>{ VOORRAAD[item.id].magazijn += item.geleverd; });
+  document.getElementById('badge-levering').style.display='none';
+  compScores.levering=85; compStatus.levering='behaald';
+  document.getElementById('taak-levering').querySelector('.pill').className='pill pill-ok';
+  document.getElementById('taak-levering').querySelector('.pill').textContent='✓ Gedaan';
+  document.getElementById('taak-rek-pill').className='pill pill-info';
+  document.getElementById('taak-rek-pill').textContent='Te doen';
+  renderVoorraad();
+  renderProductGrids();
+  updateSidebar();
+  logActiviteit('Levering #LV-2024-047 verwerkt — '+LEVERING_ITEMS.length+' artikelgroepen opgeslagen in magazijn');
+
+  fb.className='fb-vak ok';
+  fb.innerHTML='✅ Levering geregistreerd! Voorraad bijgewerkt. '+fbtekst+'<br><span class="small-grey">Competentie 14 afgerond.</span>';
+  toonToast('✅ Levering verwerkt','ok');
+}
+
+// ═══════════════════════════════════════════════
+//  VOORRAAD
+// ═══════════════════════════════════════════════
+function renderVoorraad(){
+  const el=document.getElementById('voorraad-tabel');
+  let html=`<table class="data-table"><thead><tr><th>Artikel</th><th>Rek</th><th>Magazijn</th><th>Status</th><th>Actie</th></tr></thead><tbody>`;
+  PRODUCTEN.forEach(p=>{
+    const vr=VOORRAAD[p.id]; const status=vr.rek===0?'leeg':vr.rek<=3?'laag':'ok';
+    const pill=status==='ok'?'pill-ok':status==='laag'?'pill-warn':'pill-danger';
+    const pillTxt=status==='ok'?'OK':status==='laag'?'Laag':'Uitverkocht';
+    const bar=Math.min(100,vr.rek/p.min*100);
+    html+=`<tr><td>${p.ico} ${p.naam}</td>
+    <td><div style="font-size:12px;font-weight:700;">${vr.rek}</div><div class="voorraad-bar"><div class="voorraad-bar-fill ${status}" style="width:${bar}%"></div></div></td>
+    <td style="font-size:12px;">${vr.magazijn}</td>
+    <td><span class="pill ${pill}">${pillTxt}</span></td>
+    <td>${vr.rek<p.min&&vr.magazijn>0?`<button class="btn btn-teal btn-sm" onclick="vulRekAan('${p.id}')">📦 Aanvullen</button>`:'—'}</td></tr>`;
+  });
+  html+=`</tbody></table>`;
+  el.innerHTML=html;
+
+  // Aanvul selectie
+  const laag=PRODUCTEN.filter(p=>VOORRAAD[p.id].rek<p.min && VOORRAAD[p.id].magazijn>0);
+  const sel=document.getElementById('aanvul-selectie');
+  if(!laag.length){ sel.innerHTML='<div class="info-blok">✅ Alle rekken zijn voldoende gevuld.</div>'; }
+  else { sel.innerHTML=laag.map(p=>`<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:8px;background:var(--cvo-lichtgrijs);border-radius:4px;"><span style="font-size:18px">${p.ico}</span><div style="flex:1"><div style="font-size:12px;font-weight:700">${p.naam}</div><div class="small-grey">Rek: ${VOORRAAD[p.id].rek} | Magazijn: ${VOORRAAD[p.id].magazijn} | Minimum: ${p.min}</div></div><button class="btn btn-teal btn-sm" onclick="vulRekAan('${p.id}')">Aanvullen (FIFO)</button></div>`).join(''); }
+
+  // Bestelling preview
+  const bestel=PRODUCTEN.filter(p=>VOORRAAD[p.id].rek+VOORRAAD[p.id].magazijn<p.min*1.5);
+  const bprev=document.getElementById('bestelling-preview');
+  if(!bestel.length){ bprev.innerHTML='<div class="info-blok">Geen artikelen vereisen momenteel een bestelling.</div>'; }
+  else { bprev.innerHTML=`<table class="data-table"><thead><tr><th>Artikel</th><th>Huidig totaal</th><th>Min.</th><th>Bestellen</th></tr></thead><tbody>${bestel.map(p=>`<tr><td>${p.ico} ${p.naam}</td><td class="td-num">${VOORRAAD[p.id].rek+VOORRAAD[p.id].magazijn}</td><td class="td-num">${p.min}</td><td class="td-num">${Math.max(0,p.min*2-(VOORRAAD[p.id].rek+VOORRAAD[p.id].magazijn))}</td></tr>`).join('')}</tbody></table>`; }
+
+  updateVoorraadBadge();
+}
+
+function vulRekAan(id){
+  const p=PRODUCTEN.find(x=>x.id===id);
+  const vr=VOORRAAD[id];
+  const aanvullen=Math.min(vr.magazijn, p.min*2-vr.rek);
+  if(aanvullen<=0){ toonToast('Magazijn is leeg','nok'); return; }
+  vr.rek += aanvullen; vr.magazijn -= aanvullen;
+  logActiviteit(`Rek aangevuld: ${p.naam} +${aanvullen} (FIFO)`);
+  toonToast('✅ '+p.naam+' aangevuld met '+aanvullen,'ok');
+  compScores.voorraad = Math.min(100,compScores.voorraad+20);
+  compStatus.voorraad = compScores.voorraad>=60?'behaald':'in-progress';
+  renderVoorraad(); renderProductGrids(); updateSidebar(); updateDashboardKPIs();
+  document.getElementById('fb-vak') && (document.getElementById('voorraad-fb').className='fb-vak ok') && (document.getElementById('voorraad-fb').textContent='✅ Rek aangevuld met FIFO-principe.');
+  const fbe=document.getElementById('voorraad-fb');
+  fbe.className='fb-vak ok'; fbe.textContent=`✅ ${p.naam} aangevuld (+${aanvullen}). FIFO toegepast: nieuwe producten achteraan geplaatst.`;
+}
+
+function updateVoorraadBadge(){
+  const laag=PRODUCTEN.filter(p=>VOORRAAD[p.id].rek<p.min).length;
+  const badge=document.getElementById('badge-voorraad');
+  badge.textContent=laag; badge.style.display=laag>0?'inline':'none';
+  document.getElementById('kpi-laag').textContent=laag;
+}
+
+function plaatsBestellingVoorraad(){
+  const fb=document.getElementById('bestelling-fb');
+  fb.className='fb-vak ok';
+  fb.innerHTML='✅ Bestelling doorgestuurd naar Freshco Groothandel. Verwachte levering: morgen. Competentie 13 aangetoond.';
+  logActiviteit('Bestelling geplaatst bij leverancier via bestelformulier');
+  compScores.voorraad=100; compStatus.voorraad='behaald'; updateSidebar();
+}
+
+// ═══════════════════════════════════════════════
+//  RETOUREN
+// ═══════════════════════════════════════════════
+function verwerkRetour(){
+  const reden=document.getElementById('ret-reden').value;
+  const opl=document.getElementById('ret-oplossing').value;
+  const opm=document.getElementById('ret-opmerking').value.trim();
+  const klant=document.getElementById('ret-klant').value.trim();
+  const bon=document.getElementById('ret-bon').value;
+  const art=document.getElementById('ret-artikel').value;
+  const fb=document.getElementById('ret-fb');
+
+  if(!reden||!opl||!klant||!art){ fb.className='fb-vak nok'; fb.textContent='⚠ Vul alle verplichte velden in.'; return; }
+
+  let score=0, tips=[];
+  if(['defect','fout','verlopen'].includes(reden)) score+=2;
+  else score+=1;
+  if(['terugbetaling','ruilen'].includes(opl) && bon==='ja') score+=2;
+  else if(opl==='leidinggevende') { score+=1; tips.push('Goed dat je de leidinggevende inschakelt bij twijfel.'); }
+  else score+=1;
+  if(opm.length>30) { score+=2; } else tips.push('Schrijf een uitgebreidere mededeling naar de klant.');
+  if(bon==='nee') tips.push('Zonder bon: retour enkel mogelijk conform winkelbeleid. Leidinggevende raadplegen is aangewezen.');
+
+  const artNaam=art.split('|')[0];
+  const artPrijs=parseFloat(art.split('|')[1]);
+
+  retourLog.unshift(`${nu()} — ${klant}: ${artNaam} (${reden}) → ${opl}`);
+  document.getElementById('retour-log').innerHTML=retourLog.slice(0,5).join('<br>')||'Geen retouren.';
+
+  compScores.retour=Math.min(100,compScores.retour+score*8);
+  compStatus.retour=compScores.retour>=60?'behaald':'in-progress';
+  logActiviteit(`Retour verwerkt: ${klant} — ${artNaam} → ${opl}`);
+  updateSidebar();
+
+  if(score>=5){
+    fb.className='fb-vak ok';
+    fb.innerHTML='✅ Uitstekend afgehandeld! Correcte procedure, professionele communicatie.<br>'+tips.map(t=>`<br>💡 ${t}`).join('');
+  } else {
+    fb.className='fb-vak info';
+    fb.innerHTML='👍 Retour geregistreerd. Verbeterpunten:<br>'+tips.map(t=>`• ${t}`).join('<br>');
+  }
+  toonToast('↩️ Retour verwerkt','ok');
+}
+function resetRetour(){
+  ['ret-klant','ret-opmerking'].forEach(id=>document.getElementById(id).value='');
+  ['ret-datum','ret-artikel','ret-bon','ret-reden','ret-oplossing'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('ret-fb').className='fb-vak';
+}
+
+// ═══════════════════════════════════════════════
+//  KLANTENDOSSIERS
+// ═══════════════════════════════════════════════
+function renderKlantenLijst(){
+  const q=(document.getElementById('klant-zoek')?.value||'').toLowerCase();
+  const el=document.getElementById('klanten-lijst');
+  const lijst=q?KLANTEN.filter(k=>k.naam.toLowerCase().includes(q)||k.email.toLowerCase().includes(q)):KLANTEN;
+  el.innerHTML=lijst.map(k=>`<div class="klant-kaart" onclick="toonKlantDetail('${k.id}')">
+    <div class="flex-between"><div class="kk-naam">${k.naam}</div><div class="kk-punten">⭐ ${k.punten}pt</div></div>
+    <div class="kk-meta">${k.email} | lid: ${k.lid_sinds}</div>
+    <div class="kk-meta"><span class="pill ${k.niveau==='goud'?'pill-ok':k.niveau==='zilver'?'pill-info':'pill-grey'}">${k.niveau.toUpperCase()}</span> ${k.aankopen} aankopen</div>
+  </div>`).join('');
+}
+
+function toonKlantDetail(id){
+  const k=KLANTEN.find(x=>x.id===id);
+  document.querySelectorAll('.klant-kaart').forEach(el=>el.classList.toggle('actief',el.onclick.toString().includes(id)));
+  document.getElementById('klant-detail-titel').textContent='👤 '+k.naam;
+  const klantPct=Math.min(100,k.punten/(k.niveau==='goud'?500:k.niveau==='zilver'?300:100)*100);
+  document.getElementById('klant-detail-body').innerHTML=`
+    <div class="klant-detail-header"><div class="klant-avatar-groot">👤</div><div><div class="klant-naam-groot">${k.naam}</div><div class="klant-sub">${k.email} | ${k.tel}</div></div></div>
+    <div class="card-grid cols2" style="gap:8px;margin-bottom:12px;">
+      <div class="kpi-tile"><div class="kt-ico">⭐</div><div class="kt-val">${k.punten}</div><div class="kt-label">Spaarpt.</div></div>
+      <div class="kpi-tile"><div class="kt-ico">🛒</div><div class="kt-val">${k.aankopen}</div><div class="kt-label">Aankopen</div></div>
+    </div>
+    <div class="section-label">Loyaliteitsniveau</div>
+    <div class="flex-between mb8"><span class="pill ${k.niveau==='goud'?'pill-ok':k.niveau==='zilver'?'pill-info':'pill-grey'}">${k.niveau.toUpperCase()} — -${getKlantKorting(k)*100}%</span><span class="small-grey">Lid sinds ${k.lid_sinds}</span></div>
+    <div class="loyaliteit-meter"><div class="loyaliteit-fill" style="width:${klantPct}%"></div></div>
+    <div class="small-grey mt8">${k.punten} / ${k.niveau==='brons'?100:k.niveau==='zilver'?300:500} punten voor volgend niveau</div>
+    <div class="btn-row mt12">
+      <button class="btn btn-teal btn-sm" onclick="selecteerKlantKassa('${k.id}');gaNaar('kassa',document.querySelector('.nav-item:nth-child(4)'))">🧾 Naar kassa met klant</button>
+    </div>`;
+  compScores.klanten=Math.min(100,compScores.klanten+20);
+  compStatus.klanten=compScores.klanten>=60?'behaald':'in-progress';
+  updateSidebar();
+}
+
+function maakKlantAan(){
+  const vn=document.getElementById('nieuw-voornaam').value.trim();
+  const an=document.getElementById('nieuw-achternaam').value.trim();
+  const em=document.getElementById('nieuw-email').value.trim();
+  const tel=document.getElementById('nieuw-tel').value.trim();
+  const fb=document.getElementById('klant-fb');
+  if(!vn||!an||!em){ fb.className='fb-vak nok'; fb.textContent='⚠ Vul voornaam, achternaam en e-mail in.'; return; }
+  const nieuw={id:'K'+(100+KLANTEN.length+1),naam:vn+' '+an,email:em,tel:tel,punten:0,niveau:'brons',aankopen:0,lid_sinds:new Date().toISOString().split('T')[0]};
+  KLANTEN.push(nieuw);
+  fb.className='fb-vak ok';
+  fb.innerHTML=`✅ Klant <strong>${nieuw.naam}</strong> aangemaakt! Kaartnummer: <strong>${nieuw.id}</strong>. Loyaliteitskaart geactiveerd (0 punten, Brons).`;
+  ['nieuw-voornaam','nieuw-achternaam','nieuw-email','nieuw-tel'].forEach(id=>document.getElementById(id).value='');
+  renderKlantenLijst();
+  logActiviteit('Nieuwe klant aangemaakt: '+nieuw.naam);
+  toonToast('✅ Klant aangemaakt','ok');
+  compScores.klanten=Math.min(100,compScores.klanten+25); compStatus.klanten=compScores.klanten>=60?'behaald':'in-progress'; updateSidebar();
+}
+
+// ═══════════════════════════════════════════════
+//  LOYALITEIT
+// ═══════════════════════════════════════════════
+function renderLoyaliteitTabel(){
+  document.getElementById('loy-leden').textContent=KLANTEN.length;
+  document.getElementById('loy-punten').textContent=KLANTEN.reduce((s,k)=>s+k.punten,0);
+  document.getElementById('loy-korting').textContent=f(KLANTEN.reduce((s,k)=>s+k.aankopen*getKlantKorting(k)*5,0));
+  const el=document.getElementById('loy-tabel');
+  el.innerHTML=`<table class="data-table"><thead><tr><th>Naam</th><th>Niveau</th><th class="text-right">Punten</th><th class="text-right">Korting</th><th>Voortgang</th></tr></thead><tbody>${KLANTEN.map(k=>{
+    const nxt=k.niveau==='brons'?100:k.niveau==='zilver'?300:500;
+    const pct=Math.min(100,k.punten/nxt*100);
+    return `<tr><td>${k.naam}</td><td><span class="pill ${k.niveau==='goud'?'pill-ok':k.niveau==='zilver'?'pill-info':'pill-grey'}">${k.niveau}</span></td><td class="td-num">${k.punten}</td><td class="td-num">-${getKlantKorting(k)*100}%</td><td><div class="voortgang-balk" style="width:120px"><div class="voortgang-fill" style="width:${pct}%"></div></div></td></tr>`;
+  }).join('')}</tbody></table>`;
+}
+function zoekLoyaliteit(){
+  const q=document.getElementById('loy-zoek').value.toLowerCase();
+  const el=document.getElementById('loy-resultaat');
+  if(q.length<2){ el.innerHTML=''; return; }
+  const k=KLANTEN.find(x=>x.naam.toLowerCase().includes(q)||x.id.toLowerCase().includes(q));
+  if(!k){ el.innerHTML='<span class="small-grey">Niet gevonden.</span>'; return; }
+  el.innerHTML=`<div class="info-blok"><strong>${k.naam}</strong> — Kaartnr: ${k.id}<br>Punten: ${k.punten} | Niveau: ${k.niveau.toUpperCase()} | Korting: -${getKlantKorting(k)*100}%<br>Aankopen: ${k.aankopen} | Lid sinds: ${k.lid_sinds}</div>`;
+}
+
+// ═══════════════════════════════════════════════
+//  RAPPORTAGE
+// ═══════════════════════════════════════════════
+function updateRapportage(){
+  document.getElementById('rap-omzet').textContent=f(dagOmzet);
+  document.getElementById('rap-trans').textContent=dagTransacties;
+  document.getElementById('rap-gemiddeld').textContent=f(dagTransacties?dagOmzet/dagTransacties:0);
+  const top=Object.values(verkoopData).sort((a,b)=>b.qty-a.qty)[0];
+  document.getElementById('rap-top').textContent=top?top.ico+' '+top.naam:'—';
+  const tbody=document.getElementById('rap-tabel-body');
+  const items=Object.values(verkoopData).sort((a,b)=>b.omzet-a.omzet);
+  if(!items.length){ tbody.innerHTML='<tr><td colspan="3" style="text-align:center;color:var(--cvo-grijs);padding:16px;">Nog geen verkopen</td></tr>'; }
+  else { tbody.innerHTML=items.map(x=>`<tr><td>${x.ico} ${x.naam}</td><td>${x.qty}</td><td class="td-num">${f(x.omzet)}</td></tr>`).join(''); }
+  const bp=document.getElementById('rap-betaalmethodes');
+  const methNamen={cash:'💵 Cash',bancontact:'💳 Bancontact',visa:'💳 Visa/MC',bon:'🎟 Bon'};
+  const tot=Object.values(betaalData).reduce((s,v)=>s+v,0);
+  if(!tot){ bp.innerHTML='<p class="small-grey">Nog geen data.</p>'; }
+  else { bp.innerHTML=Object.entries(betaalData).filter(([,v])=>v>0).map(([k,v])=>`<div class="flex-between" style="padding:6px 0;border-bottom:1px solid #eee;font-size:12px;"><span>${methNamen[k]}</span><span class="mono">${f(v)} (${Math.round(v/tot*100)}%)</span></div>`).join(''); }
+}
+
+function updateDashboardKPIs(){
+  document.getElementById('kpi-omzet').textContent=f(dagOmzet);
+  document.getElementById('kpi-trans').textContent=dagTransacties;
+  document.getElementById('kpi-klanten').textContent=dagKlanten;
+  const loy=kassaKlant?1:0;
+  document.getElementById('kpi-klanten-delta').textContent='loyaliteitskaart: '+loy;
+  updateVoorraadBadge();
+}
+
+// ═══════════════════════════════════════════════
+//  DAGAFSLUITING
+// ═══════════════════════════════════════════════
+function renderKastellingTabel(){
+  const tbody=document.getElementById('kastelling-body');
+  const BEGIN=225.50;
+  tbody.innerHTML=COUPURES.map(c=>`<tr>
+    <td class="mono">${c.label}</td>
+    <td><input type="number" min="0" class="dag-invoer" style="width:70px;border:1px solid #ccc;border-radius:3px;padding:5px 8px;font-family:Courier New,monospace;font-weight:700;" value="${kastellingData[c.val]||0}" oninput="kastellingUpdate(${c.val},this.value)" id="kast-${c.val.toString().replace('.','_')}"></td>
+    <td class="td-num" id="kast-del-${c.val.toString().replace('.','_')}">€ 0,00</td>
+  </tr>`).join('');
+  berekenKastellingTotaal();
+}
+
+function kastellingUpdate(coupure,val){
+  kastellingData[coupure]=parseInt(val)||0;
+  berekenKastellingTotaal();
+}
+
+function berekenKastellingTotaal(){
+  let tot=0;
+  COUPURES.forEach(c=>{
+    const n=kastellingData[c.val]||0;
+    const sub=Math.round(n*c.val*100)/100;
+    tot+=sub;
+    const el=document.getElementById('kast-del-'+c.val.toString().replace('.','_'));
+    if(el) el.textContent=f(sub);
+  });
+  document.getElementById('kastelling-totaal').textContent=f(tot);
+  return tot;
+}
+
+// fix typo in renderKastellingTabel
+
+function hertelKas(){
+  COUPURES.forEach(c=>{ kastellingData[c.val]=0; const el=document.getElementById('kast-'+c.val.toString().replace('.','_')); if(el)el.value=0; });
+  berekenKastellingTotaal();
+  toonToast('Kastelling gereset');
+}
+
+function sluitDagAf(){
+  const geteld=berekenKastellingTotaal();
+  const cashOmzet=(betaalData.cash||0);
+  const verwacht=225.50+cashOmzet;
+  const verschil=Math.round((geteld-verwacht)*100)/100;
+  document.getElementById('zr-omzet').textContent=f(dagOmzet);
+  document.getElementById('zr-pin').textContent=f((betaalData.bancontact||0)+(betaalData.visa||0));
+  document.getElementById('zr-cash-omzet').textContent=f(cashOmzet);
+  document.getElementById('zr-verwacht').textContent=f(verwacht);
+  document.getElementById('zr-geteld').textContent=f(geteld);
+  document.getElementById('zr-verschil').textContent=(verschil>=0?'+':'')+verschil.toFixed(2).replace('.',',');
+  document.getElementById('zr-verschil').style.color=Math.abs(verschil)<0.5?'var(--groen-ok)':'var(--cvo-rood)';
+  document.getElementById('zr-trans').textContent=dagTransacties;
+  document.getElementById('zr-gem').textContent=f(dagTransacties?dagOmzet/dagTransacties:0);
+  document.getElementById('zr-afsluit-ts').textContent='✅ Z-RAPPORT — '+new Date().toLocaleString('nl-BE');
+  document.getElementById('zr-afsluit-ts').style.color='var(--groen-ok)';
+
+  const fb=document.getElementById('dag-fb');
+  fb.className='fb-vak ok';
+  fb.innerHTML=`✅ Dag afgesloten! Z-rapport aangemaakt.<br>Verschil: <strong>${(verschil>=0?'+':'')+verschil.toFixed(2).replace('.',',')}${Math.abs(verschil)<0.5?' (binnen norm)':' ⚠ Meld aan leidinggevende!'}</strong>`;
+
+  compScores.dagafsluiting=85; compStatus.dagafsluiting='behaald';
+  logActiviteit('Dagafsluiting voltooid — Z-rapport gegenereerd, verschil: '+(verschil>=0?'+':'')+f(Math.abs(verschil)));
+  updateSidebar();
+  toonToast('🔒 Dag afgesloten','ok');
+}
+
+// ═══════════════════════════════════════════════
+//  COMPETENTIES & SIDEBAR
+// ═══════════════════════════════════════════════
+const COMP_INFO = {
+  levering:{label:'Comp. 14',beschr:'Levering ontvangen & controleren'},
+  voorraad:{label:'Comp. 12-13',beschr:'Voorraad opvolgen & aanvullen'},
+  kassa:{label:'Comp. 10',beschr:'Kassa bedienen & betaalmiddelen'},
+  retour:{label:'Comp. 16',beschr:'Retouren verwerken'},
+  klanten:{label:'Comp. 7',beschr:'Professioneel met klanten'},
+  dagafsluiting:{label:'Comp. 10b',beschr:'Dagafsluiting & Z-rapport'},
+};
+
+function renderCompoverzicht(){
+  const el=document.getElementById('comp-overzicht');
+  el.innerHTML=Object.entries(COMP_INFO).map(([k,v])=>{
+    const status=compStatus[k];
+    const score=compScores[k];
+    const pillCls=status==='behaald'?'pill-ok':status==='in-progress'?'pill-warn':'pill-grey';
+    const pillTxt=status==='behaald'?'✓ Behaald':status==='in-progress'?'Bezig':'Open';
+    return `<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid #eee;">
+      <div style="flex:1"><div style="font-size:12px;font-weight:700;">${v.label}</div><div class="small-grey">${v.beschr}</div></div>
+      <span class="pill ${pillCls}">${pillTxt}</span>
+      <div style="width:60px;text-align:right;font-size:12px;font-weight:700;color:var(--cluster-verkoop)">${score}%</div>
+    </div>`;
+  }).join('');
+}
+
+function updateSidebar(){
+  const totaal=Object.values(compScores).reduce((s,v)=>s+v,0);
+  const max=Object.keys(compScores).length*100;
+  const pct=Math.round(totaal/max*100);
+  const behaald=Object.values(compStatus).filter(s=>s==='behaald').length;
+  document.getElementById('sidebar-pct').textContent=pct+'%';
+  document.getElementById('sidebar-detail').textContent=behaald+' / '+Object.keys(compStatus).length+' modules';
+  document.getElementById('sidebar-balk').style.width=pct+'%';
+  renderCompoverzicht();
+  renderDocentenInhoud();
+}
+
+// ═══════════════════════════════════════════════
+//  DOCENTEN PANEEL
+// ═══════════════════════════════════════════════
+const CURSISTEN_DEMO = [
+  {naam:'An Claes',scores:{levering:85,voorraad:70,kassa:90,retour:75,klanten:60,dagafsluiting:85}},
+  {naam:'Mehmet Yilmaz',scores:{levering:100,voorraad:85,kassa:75,retour:60,klanten:80,dagafsluiting:0}},
+  {naam:'Sara De Wolf',scores:{levering:60,voorraad:90,kassa:100,retour:85,klanten:70,dagafsluiting:90}},
+];
+
+function renderDocentenInhoud(){
+  const alle=[...CURSISTEN_DEMO, {naam:document.getElementById('cursist-naam-display').textContent||'Cursist',scores:{...compScores}}];
+  const el=document.getElementById('docenten-inhoud');
+  if(!el) return;
+  el.innerHTML=alle.map(c=>{
+    const tot=Object.values(c.scores).reduce((s,v)=>s+v,0);
+    const pct=Math.round(tot/(6*100)*100);
+    return `<div class="cursist-rij">
+      <div class="cr-avatar">👤</div>
+      <div style="flex:1"><div class="cr-naam">${c.naam}</div>
+        <div class="comp-matrix">${Object.entries(COMP_INFO).map(([k,v])=>{
+          const s=c.scores[k]||0;
+          const cls=s>=80?'behaald':s>=40?'in-progress':'open';
+          return `<div class="comp-cel ${cls}" title="${v.label}: ${s}%">${s}%</div>`;
+        }).join('')}</div>
+        <div class="small-grey" style="margin-top:4px;">${Object.entries(COMP_INFO).map(([k,v])=>v.label).join(' • ')}</div>
+      </div>
+      <div class="cr-score-balk"><div class="voortgang-balk"><div class="voortgang-fill" style="width:${pct}%"></div></div></div>
+      <div class="cr-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+function openDocenten(){ document.getElementById('docenten-modal').classList.add('open'); renderDocentenInhoud(); }
+function sluitDocenten(){ document.getElementById('docenten-modal').classList.remove('open'); }
+function aanmeldenCursist(){
+  const naam=document.getElementById('cursist-naam-inp').value.trim()||'Cursist';
+  document.getElementById('cursist-naam-display').textContent=naam;
+  sluitDocenten();
+  toonToast('👤 Aangemeld als '+naam,'ok');
+}
+
+// ═══════════════════════════════════════════════
+//  START
+// ═══════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
